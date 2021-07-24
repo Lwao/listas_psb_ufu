@@ -1,0 +1,36 @@
+
+---
+title: "Lista do Módulo 1"
+author: "Levy Gabriel da Silva Galvão"
+output: 
+  html_document:
+    highlight: tango
+    includes:
+      after_body: psbfix.html
+---
+
+# Módulo 1
+## Parte 1
+### Exercício 1
+> Crie uma função em R para fazer a conversão entre unidades de temperatura (De Kelvin para Celcius). Forneça um exemplo de uso.
+
+Reposta do ex 1
+
+
+### Exercício 2
+> Exercício 2
+
+
+```r
+#Código do ex 2
+```
+
+### Exercício 3
+> Enunciado do ex 3 
+
+
+```r
+#Código do ex 3
+```
+
+Resposta do ex 3

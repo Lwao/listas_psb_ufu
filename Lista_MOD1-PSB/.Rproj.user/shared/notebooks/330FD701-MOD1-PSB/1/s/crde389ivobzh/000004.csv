@@ -1,0 +1,5 @@
+"0","kelvin2celsius <- function(temp_kelvin)"
+"0","{"
+"0","  temp_celsius <- temp_kelvin - 273.15"
+"0","  return(temp_celsius)"
+"0","}"

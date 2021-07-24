@@ -1,0 +1,7 @@
+"0","cntp_kelvin <- 273.15"
+"0","cntp_celsius <- kelvin2celsius(cntp_kelvin)"
+"0","print(cntp_celsius)"
+"1","[1]"
+"1"," 0"
+"1","
+"
