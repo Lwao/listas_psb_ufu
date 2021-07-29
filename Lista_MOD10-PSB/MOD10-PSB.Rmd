@@ -1,0 +1,71 @@
+
+---
+title: "Lista do Módulo 1"
+author: "Levy Gabriel da Silva Galvão"
+output: 
+  html_document:
+    highlight: tango
+    includes:
+      after_body: psbfix.html
+---
+
+# Módulo 1
+## Parte 1
+### Exercício 1
+> Crie uma função em R para fazer a conversão entre unidades de temperatura (De Kelvin para Celcius). Forneça um exemplo de uso.
+install.packages("[https://cran.r-project.org/src/contrib/Archive/rlang/rlang_0.4.10.tar.gz]", repo=NULL, type="source")
+```{r}
+kelvin2celsius <- function(temp_kelvin)
+{
+  temp_celsius <- temp_kelvin - 273.15
+  return(temp_celsius)
+}
+```
+
+Um exemplo para este caso é encontrar a temperatura padrão das condições normais de temperatura e pressão (CNTP) de 273.15 K em Celsius, resultando em:
+
+```{r}
+cntp_kelvin <- 273.15
+cntp_celsius <- kelvin2celsius(cntp_kelvin)
+print(cntp_celsius)
+```
+
+### Exercício 2
+> Crie um loop que imprima os valores ímpares no intervalo de 1 a 100.
+
+resposta
+
+```r
+# codigo
+```
+### Exercício 3
+> Qual a diferença entre os operadores “&”, “&&”, “|” e “||”. Ilustre o uso destes operadores por meio de um programa exemplo.
+resposta
+
+```r
+# codigo
+```
+### Exercício 4
+> Faça um programa que exemplifique o uso do operador “%in%”
+
+resposta
+
+```r
+# codigo
+```
+### Exercício 5
+> Dado a string “O Sol é muito maior do que a Terra”, faça um programa que:
+
+- Substitua a palavra “Terra” por “Lua”
+- Conte o número de caracteres da string original e da string alterada;
+- Ordene a string alterada
+- Faça uma comparação usando o operador & entre a string alterada e original.
+- Explique o resultado obtido.
+- Utilize o operador == para identificar os caracteres iguais.
+
+```r
+# codigo
+```
+
+### Exercício 6
+> Refaça todos os exemplos apresentados neste módulo Parte 1.
