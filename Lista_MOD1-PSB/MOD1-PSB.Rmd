@@ -4,6 +4,7 @@ title: "Lista do Módulo 1"
 author: "Levy Gabriel da Silva Galvão"
 output: 
   html_document:
+    toc: true
     highlight: tango
     includes:
       after_body: psbfix.html
@@ -13,7 +14,6 @@ output:
 ## Parte 1
 ### Exercício 1
 > Crie uma função em R para fazer a conversão entre unidades de temperatura (De Kelvin para Celcius). Forneça um exemplo de uso.
-install.packages("[https://cran.r-project.org/src/contrib/Archive/rlang/rlang_0.4.10.tar.gz]", repo=NULL, type="source")
 ```{r}
 kelvin2celsius <- function(temp_kelvin)
 {
@@ -33,25 +33,47 @@ print(cntp_celsius)
 ### Exercício 2
 > Crie um loop que imprima os valores ímpares no intervalo de 1 a 100.
 
-resposta
-
-```r
-# codigo
+```{r}
+num <- 0
+for(num in 1:100)
+{
+  if(num %% 2) # if number is odd
+  {
+    print(num)
+  }
+}
 ```
 ### Exercício 3
 > Qual a diferença entre os operadores “&”, “&&”, “|” e “||”. Ilustre o uso destes operadores por meio de um programa exemplo.
 resposta
 
-```r
-# codigo
+Os operadores simples "&" e "|" atuam realizando a operação elemento a elemento (*element wise*) entre seus operandos, enquanto que os operadores "&&" e "||" executam a operação em um único elemento e, se utilizado entre *arrays*, a operação será feita somente no primeiro elemento. Vide exemplo abaixo.
+
+```{r}
+# test arrays
+x <- c(FALSE, FALSE, TRUE, TRUE)
+y <- c(FALSE, TRUE, FALSE, TRUE)
+# element wise operation
+print(x&y)
+print(x|y)
+# single element operation
+print(x&&y)
+print(x||y)
 ```
+Pela distribuição dos *arrays*, permite-se traçar as tabelas verdades da operação AND por meio do operador "&" e da operação OR por meio do operador "|", enquanto que como o esperado os operadores duplos atuam somente nos primeiros elementos.
+
 ### Exercício 4
 > Faça um programa que exemplifique o uso do operador “%in%”
 
-resposta
+O operador "%in%" verifica se o conteúdo do *array* como primeiro operando está contido no *array* como segundo operando. O retorno é um *array* binário que pode ser usado para indexar todo o conteúdo do primeiro operando que está contido no segundo operando. Vide os exemplos abaixo.
 
-```r
-# codigo
+```{r}
+x <- c(0, 2, 4, 6)
+y <- 1:10
+# boolean array that indicates whether content of first operand is in the second operand
+print(x%in%y)
+# this result can be used to index all the content from the first operand that meets the requirements
+print(x[x%in%y])
 ```
 ### Exercício 5
 > Dado a string “O Sol é muito maior do que a Terra”, faça um programa que:
@@ -63,9 +85,150 @@ resposta
 - Explique o resultado obtido.
 - Utilize o operador == para identificar os caracteres iguais.
 
-```r
-# codigo
+O primeiro passo é substituir o trecho "Terra" da *string* por "Lua", resultando em (com o auxílio da biblioteca **stringr**):
+
+```{r}
+library(stringr) # library to handle strings
+str_ <- "O Sol é muito maior do que a Terra"
+str_new <- str_replace(str_, "Terra", "Lua")
+print(str_new)
 ```
+Assim, o número de caracteres da *string* original será:
+
+```{r}
+print(str_length(str_))
+```
+
+E da *string* modificada:
+
+```{r}
+print(str_length(str_new))
+```
+Assim, mostrando que, uma vez que a palavra inserida "Lua" np lugar de "Terra" por ter uma quantidade de caracteres menor, permitiu que a nova *string* modificada possua, também, menos caracteres.
+
+O próximo passo é ordenar os caracteres da *string* modificada, resultando em:
+
+```{r}
+str_splited = unlist(strsplit(str_new, "")) # split string to get characters
+str_sorted <- str_sort(str_splited) # sorting in ascending order
+str_merged <- str_c(str_sorted, collapse="")
+print(str_merged)
+```
+
+O passo seguinte é comparar a *string* alterada com a original com meio do operador "&" elemento a elemento.
+
+```{r, error=TRUE}
+print(str_merged & str_new)
+```
+A operação AND elemento a elemento não é definida para *strings* ou caracteres, por isso o erro persiste.
+
+Porém a comparação de igualdade "==" existe e, por meio do vetor de caracteres, pode-se definir um vetor comparando quais caracteres são iguais.
+
+```{r}
+print(unlist(strsplit(str_new, "")) == unlist(strsplit(str_, "")))
+```
+Apesar das *strings* diferirem no tamanho (a nova *string* é menor), a operação de igualdade ainda é feita, porém com um aviso. O vetor booleano resultante possuirá o tamanho da maior *string* e os últimos elementos que não existem na *string* menor serão preenchidos com FALSE.
+
 
 ### Exercício 6
 > Refaça todos os exemplos apresentados neste módulo Parte 1.
+
+```{r}
+```
+
+## Parte 2
+### Exercício 7
+> Refaça todos os exemplos apresentados neste módulo Parte 2.
+
+### Exercício 8
+> Faça um programa em R que avalie o nível de atividade física dos estudantes da disciplina de Processamento de Sinais Biomédicos.
+
+As seguintes variáveis devem ser consideradas:
+
+- Identificador do participante (id)
+- Curso do participante (cp)
+- Período do curso (pc)
+- Idade (idade)
+- Peso (peso)
+- Altura (altura)
+- Nível de atividade física (nat)
+  - nat = “nula” - nenhuma vez por semana
+  - nat = “baixa” - de uma a duas vezes por semana
+  - nat = “moderada” - três a cinco vezes por semana
+  - nat = “avançada” - acima de cinco vezes por semana
+
+> Construa um data frame que armazene as variáveis coletadas e faça os seguintes cálculos:
+
+- Número de participantes por cada uma das categorias de nível de atividade fisica (nat)
+- Percentual de participantes por cada uma das categorias de nível de atividade fisica (nat)
+- Valor médios das variáveis: idade, peso e altura (calcular os valores médios globais, por período de curso e por curso)
+
+```{r}
+library(dplyr)
+df <- data.frame( # it was used generic data
+  id = 1:5,
+  cp = c("curso 1", "curso 1", "curso 2", "curso 1", "curso 2"),
+  pc = c(5, 2, 4, 9, 9),
+  peso = c(40, 80, 90, 50, 60),
+  idade = c(20, 22, 21, 19, 18),
+  altura = c(180, 129, 160, 170, 180),
+  nat = c("avançada", "nula", "nula", "moderada", "baixa")
+)
+```
+Segue abaixo o número de participantes por cada nível de atividade física:
+
+```{r}
+partPerNat <- df %>% count(nat)
+print(partPerNat)
+```
+
+Agora o dado anterior com a opção em formato percentual inserida:
+
+```{r}
+numberOfParticipants <- sum(partPerNat$n)
+partPerNat$percentual <- partPerNat$n * (100/numberOfParticipants)
+print(partPerNat)
+```
+
+O próximo passo é calcular a média dos valores numéricos peso, idade e altura do *data frame* para várias situações diferentes. Será utilizado o vetor abaixo para indexar as colunas desejadas:
+
+
+```{r}
+idxCol <- c("peso", "idade", "altura") # selected columns
+```
+
+A primeira consiste nos valoes médios globais, resultando em:
+
+```{r}
+df_globalMean <- colMeans(df[idxCol], na.rm=TRUE)
+print(df_globalMean)
+```
+
+Outro quesito é realizar a média baseados em valores filtrados por período de curso, resultando em (nesse caso será exemplificado considerando o nono período):
+
+```{r}
+selectedPeriod <- 9
+df_sortedByPeriod <- df %>% filter(pc == selectedPeriod) 
+df_periodMean <- colMeans(df_sortedByPeriod[idxCol], na.rm=TRUE)
+print(df_periodMean)
+```
+
+
+Por fim, filtrando por curso (nesse caso será exemplificado considerando o curso 1):
+
+```{r}
+selectedCourse <- "curso 1"
+df_sortedByCourse <- df %>% filter(cp == selectedCourse) 
+df_courseMean <- colMeans(df_sortedByCourse[idxCol], na.rm=TRUE)
+print(df_courseMean)
+```
+
+## Parte 3
+### Exercício 9
+> Faça o tutorial sobre o package dplyr disponível em https://www.listendata.com/2016/08/dplyr-tutorial.html
+
+### Exercício 10
+> Faça o tutorial sobre o package stringr disponível em https://cran.rstudio.com/web/packages/stringr/vignettes/stringr.html
+
+### Exercício 11
+> Faça novamente o exercício 8 da Parte 2, utilizando a biblioteca dplyr
