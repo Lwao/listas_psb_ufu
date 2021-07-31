@@ -14,6 +14,7 @@ output:
 ## Parte 1
 ### Exercício 1
 > Crie uma função em R para fazer a conversão entre unidades de temperatura (De Kelvin para Celcius). Forneça um exemplo de uso.
+
 ```{r}
 kelvin2celsius <- function(temp_kelvin)
 {
@@ -134,11 +135,966 @@ Apesar das *strings* diferirem no tamanho (a nova *string* é menor), a operaç�
 > Refaça todos os exemplos apresentados neste módulo Parte 1.
 
 ```{r}
+meuTexto <- "Bom dia!" # com comentarios para teste
+print(meuTexto)
+```
+
+```{r}
+class(meuTexto)
+```
+
+```{r}
+v <- 100
+class(v)
+```
+
+```{r}
+v <- "100"
+class(v)
+```
+
+```{r}
+v <- F
+class(v)
+```
+
+```{r}
+v <- 100L 
+class(v)
+```
+
+```{r}
+v <- 6 + 8i
+class(v)
+```
+
+```{r}
+minhaVariavel <- 1
+m_var <- 1
+.mvar <- 1 # hiden object
+```
+
+```{r}
+x <- 100 # 100 stored in x
+print(x)
+y <- 200 + 300 # 100 stored in y
+print(y)
+z <- x + y 
+print(z)
+100 -> x # works fine as in x <- 100
+v_cor <- c('azul', 'amarelo', 'rosa')
+print(v_cor)
+v01 <- c(3,4,5)
+print(v01)
+```
+
+```{r}
+cat(v01) # print on screen or file
+```
+
+```{r}
+ls() # show variables
+```
+
+```{r}
+ls(pattern = "v") # variables with char v
+```
+
+```{r, error=TRUE}
+meuTexto <- "texto"
+rm(meuTexto) # remove variable from workspace
+print(meuTexto)
+```
+
+```{r}
+a1 <- c(9, 0, -4)
+a2 <- c(8, 2, -1)
+
+print(a1 + a2) # sum
+
+s1 <<- c(1, 2, 3)
+c(4, 5, 2) ->> s2
+
+print(s1-s2) # subtraction
+
+m1 <- c(2, 5, 8)
+m2 <- c(3, 6, 9)
+print(m1*m2) # multiplication
+
+d1 <- c(6,8,9)
+d2 <- c(2,4,3)
+print(d1/d2) # division
+
+r1 <- c(10, 13, 19)
+r2 <- c(3, 4, 5)
+print(r1%%r2) # module operation
+
+r1 <- c(10, 13, 19)
+r2 <- c(3, 4, 5)
+print(r1 %/% r2) # division quocient
+
+e1 <- c(2, 3, 4)
+e2 <- c(3, 2, 2)
+print(e1^e2) # exponenciation
+
+g1 <- c(6,8,9)
+g2 <- c(9,2,6)
+print(g1>g2) # greather then
+
+g1 <- c(6, 8, 9)
+g2 <- c(9,2, 6)
+print(g1<g2) # less then
+
+e1 <- c(3, 6, 9)
+e2 <- c(2, 7, 9)
+print(e1==e2) # equal
+
+e1 <- c(3, 6, 9)
+e2 <- c(2, 7, 9)
+print(e1 >= e2) # greather then and equal
+
+e1 <- c(3, 6, 9)
+e2 <- c(2, 7, 9)
+print(e1 <= e2) # less then and equal
+
+e1 <- c(3, 6, 9)
+e2 <- c(2, 7, 9)
+
+print(e1!=e2) # different
+
+x <- c(TRUE,FALSE,0,6)
+y <- c(FALSE,TRUE,FALSE,TRUE)
+
+print(!x) # element wise NOT
+print(x&y) # element wise AND 
+print(x&&y) # AND in first element
+print(x|y) # element wise OR
+print(x||y) # OR in first element
+
+v <- 1:8 
+print(v) # range
+```
+
+```{r}
+1:3==1:3 && 1:3==1:3
+```
+
+```{r}
+x <- 1:5
+x[x<5]
+```
+
+```{r}
+x[x<5 & x>2]
+```
+
+```{r}
+x[x<5 && x>2]
+```
+
+```{r}
+v1 <- 6
+v2 <- 15
+m <- 1:8
+
+print(v1 %in% m) # is in
+print(v2 %in% m) # is in
+```
+
+```{r}
+x <- 1:10
+print(x)
+y <- c(1,3:11)
+print(y)
+```
+
+```{r}
+x[x%in%y]
+```
+
+```{r}
+y[y%in%x]
+```
+
+```{r}
+y[x%in%y] # wrong indexing
+```
+
+```{r}
+m <- 200
+n <- 100
+
+if(m>n){ # if
+  print("m é maior do que n")
+}
+```
+
+```{r}
+m <- 200
+n <- 100
+
+if(m<n){ # if then else
+  print("m é menor do que n")
+} else {
+  print("m é maior do que n")
+}
+```
+
+```{r}
+#switch
+
+var <- "vegetal"
+
+switch(var,
+       fruit = "maçã",
+       vegetal = "espinafre",
+       carne = "frango")
+```
+
+```{r}
+# repeat
+var <- c("Very Good!")
+num <- 0
+
+repeat{
+  print(var)
+  num <- num + 1
+  if(num > 5){
+    
+    break # para o loop
+  }
+}
+```
+
+```{r}
+#while
+
+var <- c("OLA")
+num <- 0
+
+while(num<5){
+  print(var)
+  num <- num + 1
+}
+```
+
+```{r}
+#for
+
+var <- c(1:5)
+
+for(num in var)
+{
+  print("ola")
+  
+}
+```
+
+```{r}
+#for
+
+var <- c(1:5)
+
+for(num in var)
+{
+  print("ola")
+  
+}
+```
+
+```{r}
+# function
+
+myfunction <- function(x,y)
+{
+  num <- x + y
+  return(num)
+  
+}
+
+a <- myfunction(100, 200)
+print(a)
+```
+
+```{r}
+myfunction <- function(x,y)
+{
+  num <- 300 + 400
+  return(num)
+  
+}
+
+a <- myfunction()
+print(a)
+```
+
+```{r}
+myfunction <- function(x=3,y=5)
+{
+  num <- x + y
+  return(num)
+}
+
+a <- myfunction()
+print(a)
+```
+
+```{r}
+print(sum(200, 100))
+print(abs(-1000))
+print(max(100, 200))
+print(min(100, 200))
+print(sqrt(81))
+```
+
+```{r}
+num <- c(2, 8, 5, 9, 3)
+print(sort(num))
+```
+
+```{r}
+library(stringr) # calling library
+```
+
+```{r}
+x <- c("why", "video", "cross", "extra", "deal", "authority")
+str_length(x)
+```
+
+```{r}
+str_c(x, collapse = ", ")
+```
+
+```{r}
+str_sub(x, start = 1, end = 2)
+```
+
+```{r}
+m_str <- format(100)
+print(m_str)
+```
+
+```{r}
+# str cat
+a <- "R"
+b <- "em"
+c <- "8"
+d <- "horas"
+
+str_c(a,b, sep = " ")
+```
+
+```{r}
+paste(a,b,c,d)
+```
+
+```{r}
+str <- "Engenharia Biomédica - UFU"
+str_length(str)
+```
+
+```{r}
+str <- "ENGENHARIA BIOMÉDICA - UFU"
+str_to_lower(str)
+```
+
+```{r}
+str <- "engenharia biomédica - ufu"
+str_to_upper(str)
+```
+
+```{r}
+str <- "engenharia biomédica - ufu"
+str_to_title(str)
+```
+
+```{r}
+str <- "engenharia biomédica - ufu"
+str_replace(str,'ufu', "UFU")
 ```
 
 ## Parte 2
 ### Exercício 7
 > Refaça todos os exemplos apresentados neste módulo Parte 2.
+
+
+```{r}
+# integer vector
+v.inteiro <- integer(10)
+v.inteiro <- c(1:10)
+
+# double vector
+v.double <- numeric(10)
+v.double <- c(2.5, c(1:9))
+
+# logical vector
+v.logical <- logical(10)
+v.logical <- c(F, T, F, F, T, F, T, T, T, F)
+
+# complex vector
+v.complex <- complex(10)
+v.complex <- c(1+2i, 3+1i, 5-4i, 9-0.1i, 10-54i,
+               100-1i, -2-2i, 3+3i, 10-0i, 8)
+
+# raw vector
+v.raw <- raw(length = 5) 
+rawToChar(v.raw)
+```
+
+```{r}
+v.raw[1] <- as.raw(10)
+rawToChar(v.raw[1])
+```
+
+```{r}
+v.raw[2] <- as.raw(5)
+rawToChar(v.raw[2])
+```
+
+```{r}
+print("céu azul") # vector of chars
+print("98.1") # double
+print(2:8) # integer vector
+print(1.8:6.8) # double vector
+print (c(3,4,5)) # also integer vector
+print(c("apple", "banana", "cherry")) # string vector
+```
+
+```{r}
+seq(from = 1, to=2, by = 0.1) # ranging vector
+```
+
+```{r, error=TRUE}
+v1 <- seq(from=0, to=2, by =0.1) 
+print(v1)
+print(v1[1])
+print(v1[c(1, 4)])
+v2 <- c("maçã", "banana", "amora")
+print(v2[2])
+print(v2[c(1, 3)])
+v3 <- c("maçã", "banana", "amora")
+print(v3[c(FALSE, TRUE, FALSE)]) # only true values are displayed
+v2 <- c("maçã", "banana", "amora")
+print(v2)
+print(v2[-2]) # removing second element
+
+v1 <- c(1, 2, 3)
+v2 <- c(4, 5, 6)
+
+print(v1 + v2) # vector sum
+print(v1 - v2) # vector sub
+print(v1 * v2) # vector mul
+print(v1/v2) # vector div
+
+v1 <- c(4,5,6,7,8,9)
+v2 <- c(2,3)
+r <- v1 + v2
+
+print(r)print(v2 - v1)
+
+v<-c(1:10)
+print(sort(v, decreasing = TRUE))
+a<-seq(from=-1, to=1, by = 0.1)
+print(sort(a, decreasing = FALSE))
+ml <- list("a", "b", "c", "d")
+print(ml)
+print(ml[2])
+ml[5] <- 45.67
+print(ml)
+ml[5] <- NULL
+print(ml)
+ml[2] <- "atualizei o segundo elemento"
+print(ml[2])
+l1 <- list("a", "b", 2)
+l2 <- list("d", "e", 3)
+l12  <- c(l1, l2)
+print(l12)
+v12 <- unlist(l12)
+print(v12)
+
+v <- c(1:12)
+vnames <- list( 
+  c("row1", "row2"), # row names
+  c("col1", "col2", "col3","col4","col5","col6")) # column names
+
+m <- matrix(v, nrow = 2, ncol = 6, byrow = TRUE, dimnames = vnames)
+
+print(m)
+
+m <- matrix(v, nrow = 2, ncol = 6, byrow = FALSE, dimnames = vnames)
+
+print(m)
+print(m[2,3])
+print(m[1,3])
+print(m[2,6])
+print(m[1,4])
+
+m2 <- matrix(c(4,5,6,7,8,9), nrow = 2)
+print(m2)
+
+print(m2 + m2)
+print(m2 - m2)
+print(m2 * m2) 
+print(m2/3*m2) 
+
+rownames <- c("r1", "r2", "r3")
+colnames <- c("c1", "c2", "c3",  "c4")
+
+m1 <- matrix(c(1:12), nrow = 3, ncol = 4, dimnames = list(rownames, colnames))
+
+print(m1)
+
+M1 = matrix(c(46,  41,  85,  94,  10,  21,  27,  39,  89), nrow = 3)
+
+M2 = matrix(c(26,  54,  39,  32,  62,  85,  19,  57,  38), nrow = 3)
+
+## multiplication
+M_prod = M1 %*% M2
+
+print(M_prod); cat("\n")
+
+M_transp = t(M1)
+
+print(M_transp); cat("\n")
+```
+
+```{r}
+M1 = matrix(c(46,  41,  85,  94,  10,  21,  27,  39,  89), nrow = 3)
+M2 = matrix(c(26,  54,  39,  32,  62,  85,  19,  57,  38), nrow = 3)
+det(M1) # determinant of matrix
+```
+
+```{r}
+M_inversa = solve(M1)
+
+print(M_inversa); cat("\n")
+```
+
+```{r}
+solve(M1)%*%M1
+```
+
+```{r}
+sum(diag(M1))
+```
+
+```{r}
+crossprod(M1,M2)   # M1'M2
+```
+
+```{r}
+kronecker(M1, M2)
+```
+
+```{r}
+print(array(1:8))
+print(array(1:8, dim = c(2,4)))
+print(array(1:16, dim = c(2,4,2))) 
+
+rowname <- c("r1", "r2", "r3")
+colname <- c("c1", "c2", "c3")
+matrixname <- c("m1", "m2")
+
+marray <- array(1:18, dim = c(3,3,2),
+                dimnames = list(rowname, 
+                                colname,
+                                matrixname))
+
+print(marray)
+
+print( marray[2, 3 ,1] )
+print(marray[,,1])
+print(marray[2,,1])
+
+vector1 <- c(1,2,3)
+vector2 <- c(4,5,6,7,8,9)
+
+marray <- array(c(vector1, vector2),
+                dim = c(3,3,1))
+
+print(marray)
+
+result1 <- apply(marray, c(1), sum)
+print(result1)
+```
+
+```{r}
+result2 <- apply(marray, c(2), sum)
+apply(marray, c(3), sum)
+```
+
+```{r}
+result3 <- apply(marray, c(3), sort)
+print(result3)
+myfactor <- factor(1:5, levels=1:8, labels = c("a"))
+print(myfactor)
+data <- c("A", "C", "B", "B", "C", "A")
+myfactor <- factor(data)
+print(myfactor)
+myfactor <- factor(1:5, levels = 1:3,
+                   labels=c("a", "b", "c"))
+
+print(myfactor)
+data <- c("A", "C", "B", "B", "C", "A")
+myfactor <- factor(data, labels=c("maçã", "banana", "uva"))
+print(myfactor)
+myfactor <- factor(c("A", "B","C"),
+                   levels = c("C", "B", "A"))
+print(myfactor)
+L <- gl(4,2, labels = c("A", "B", "C", "D"))
+print(L)
+L <- gl(4,5, labels = c("A", "B", "C", "D"))
+print(L)
+```
+
+```{r}
+sex <- factor(c("male", "female", "female", "male"))
+
+levels(sex)
+```
+
+```{r}
+nlevels(sex)
+```
+
+```{r}
+food <- factor(c("low", "high", "medium", "high", "low", "medium", "high"))
+levels(food)
+```
+
+```{r}
+food <- factor(food, levels = c("low", "medium", "high"))
+levels(food)
+```
+
+```{r}
+food <- factor(food, levels = c("low", "medium", "high"), ordered = TRUE)
+levels(food)
+```
+
+```{r}
+exercise <- factor(c("l", "n", "n", "i", "l"), levels = c("n", "l", "i"), ordered = TRUE)
+print(exercise)
+```
+
+```{r}
+df <- data.frame(
+  id = c(1:5),
+  name = c("Silvana", "João", "Maria", "Roberto", "Carla"),
+  score = c(85,99,95,92,96),
+  year = c("2009", "2002", "2008", "2006", "2007"),
+  stringsAsFactors = FALSE
+)
+
+print(df)
+```
+
+```{r}
+str(df)
+```
+
+```{r}
+summary(df)
+```
+
+```{r}
+print(df$id)
+print(df$name)
+print(df$score)
+print(df$year)
+
+df$idade <- c(30,40,17,12,98)
+print(df)
+
+newRows <- data.frame(
+  
+  id = c(6,7),
+  name = c("Rui", "Alana"),
+  score = c(100, 33),
+  year = c("1999", "1997"),
+  idade = c(43, 33),
+  stringsAsFactors = FALSE
+  
+)
+
+df <- rbind(df, newRows)
+print(df)
+
+id <- c("001", "002", "003", "004")
+name <- c("Anna", "Judy", "Tony", "Nacy")
+age <- c(18, 16, 20, 19)
+
+members <- cbind(id, name,age)
+print(members)
+```
+
+```{r}
+library(dplyr)
+library(nycflights13)
+dim(flights)
+```
+
+```{r}
+str(flights)
+```
+
+```{r}
+filter(flights, month == 1, day == 1)
+```
+
+```{r}
+arrange(flights, dep_time, day, month, year)
+```
+
+```{r}
+arrange(flights, dep_time, desc(day), month, year)
+```
+
+```{r}
+select(flights, year, month, day)
+```
+
+```{r}
+rename(flights, tail_num = tailnum)
+```
+
+
+```{r}
+mutate(flights,
+  gain = arr_delay - dep_delay,
+  speed = distance / air_time * 60
+)
+```
+
+```{r}
+transmute(flights,
+  gain = arr_delay - dep_delay,
+  gain_per_hour = gain / (air_time / 60)
+)
+```
+
+```{r}
+summarise(flights,
+  delay = mean(dep_delay, na.rm = TRUE)
+)
+```
+
+```{r}
+sample_n(flights, 10)
+```
+
+```{r}
+sample_frac(flights, 0.01)
+```
+
+```{r}
+by_tailnum <- group_by(flights, tailnum) 
+
+delay <- summarise(by_tailnum, 
+  count = n(),
+  dist = mean(distance, na.rm = TRUE),
+  delay = mean(arr_delay, na.rm = TRUE))
+
+delay <- filter(delay, count > 20, dist < 2000) 
+
+daily <- group_by(flights, year, month, day)
+(per_day   <- summarise(daily, flights = n()))
+```
+
+```{r}
+select(flights, year)
+```
+
+```{r}
+select(flights, 1)
+```
+
+```{r}
+select(flights, starts_with("dep"))
+```
+
+```{r}
+# Piping
+a1 <- group_by(flights, year, month, day)
+a2 <- select(a1, arr_delay, dep_delay)
+a3 <- summarise(a2,
+  arr = mean(arr_delay, na.rm = TRUE),
+  dep = mean(dep_delay, na.rm = TRUE))
+a4 <- filter(a3, arr > 30 | dep > 30)
+
+# or...
+flights %>%
+  group_by(year, month, day) %>%
+  select(arr_delay, dep_delay) %>%
+  summarise(
+    arr = mean(arr_delay, na.rm = TRUE),
+    dep = mean(dep_delay, na.rm = TRUE)
+  ) %>%
+  filter(arr > 30 | dep > 30)
+```
+
+```{r}
+```
+
+```{r}
+```
+
+```{r}
+```
+
+```{r}
+```
+
+```{r}
+```
+
+```{r}
+```
+
+```{r}
+```
+
+```{r}
+```
+
+```{r}
+```
+
+```{r}
+```
+
+```{r}
+```
+
+```{r}
+```
+
+```{r}
+```
+
+```{r}
+```
+
+```{r}
+```
+
+```{r}
+```
+
+```{r}
+```
+
+```{r}
+```
+
+```{r}
+```
+
+```{r}
+```
+
+```{r}
+```
+
+```{r}
+```
+
+
+```{r}
+```
+
+```{r}
+```
+
+```{r}
+```
+
+```{r}
+```
+
+```{r}
+```
+
+```{r}
+```
+
+```{r}
+```
+
+```{r}
+```
+
+```{r}
+```
+
+```{r}
+```
+
+```{r}
+```
+
+```{r}
+```
+
+```{r}
+```
+
+```{r}
+```
+
+```{r}
+```
+
+```{r}
+```
+
+```{r}
+```
+
+```{r}
+```
+
+```{r}
+```
+
+```{r}
+```
+
+```{r}
+```
+
+```{r}
+```
+
+```{r}
+```
+
+```{r}
+```
+
+```{r}
+```
+
+```{r}
+```
+
+```{r}
+```
+
+```{r}
+```
+
+```{r}
+```
+
+```{r}
+```
+
+```{r}
+```
+
+```{r}
+```
 
 ### Exercício 8
 > Faça um programa em R que avalie o nível de atividade física dos estudantes da disciplina de Processamento de Sinais Biomédicos.
