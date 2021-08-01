@@ -1183,8 +1183,268 @@ print(df_courseMean)
 ### Exercício 9
 > Faça o tutorial sobre o package dplyr disponível em https://www.listendata.com/2016/08/dplyr-tutorial.html
 
+
+```{r}
+library(dplyr) # load dplyr
+mydata = read.csv("https://raw.githubusercontent.com/deepanshu88/data/master/sampledata.csv") # loading data from .csv hosted in url
+print(sample_n(mydata,3)) # random rows can be selected for visualization
+print(sample_frac(mydata,0.1)) # visualize  randomly percentage of rows
+x1 = distinct(mydata) # eliminate duplicates in data on all columns
+x2 = distinct(mydata, Index, .keep_all= TRUE) # same as before but maintains all other columns
+x2 = distinct(mydata, Index, Y2010, .keep_all= TRUE) # remove duplicates rows based in multiples columns/variables
+mydata2 = select(mydata, Index, State:Y2008) # select some columns of a data frame
+select(mydata, -Index, -State) # drop selected columns
+select(mydata, -c(Index,State)) # same results as before, but different syntax
+mydata3 = select(mydata, starts_with("Y")) # select columns that starts according to key char/word
+mydata33 = select(mydata, -starts_with("Y")) # same as before, but instead selecting it drops any column that matches
+mydata4 = select(mydata, contains("I")) # select columns that contains char/word
+mydata5 = select(mydata, State, everything()) # keeps column State in front of every other one
+rename(mydata, Index1=Index) # rename column
+mydata7 = filter(mydata, Index == "A") # filter subset that matches condition in argument
+mydata7 = filter(mydata, Index %in% c("A", "C")) # multiple filter criteria
+mydata8 = filter(mydata, Index %in% c("A", "C") & Y2002 >= 1300000 ) # using AND in condition
+mydata9 = filter(mydata, Index %in% c("A", "C") | Y2002 >= 1300000) # using OR in condition
+mydata10 = filter(mydata, !Index %in% c("A", "C")) # using NOT in condition
+mydata10 = filter(mydata, grepl("Ar", State)) # search for pattern matches that contains argument
+summarise(mydata, Y2015_mean = mean(Y2015), Y2015_med=median(Y2015)) # mean and median
+summarise_at(mydata, vars(Y2005, Y2006), list(n=~n(), mean=mean, median=median)) # summarise multiples columns
+summarise_at(mydata, vars(Y2011, Y2012),funs(mean, median), na.rm = TRUE) # add additional arguments from code above
+summarise_if(mydata, is.numeric, funs(n(),mean,median)) # summarise if attends to condition
+numdata = mydata[sapply(mydata,is.numeric)] # other method
+summarise_all(numdata, funs(n(),mean,median)) # other method
+summarise_all(mydata["Index"], funs(nlevels(.), nmiss=sum(is.na(.)))) # check levels and count missing observations
+arrange(mydata, Index, Y2011) # sort data by columns
+arrange(mydata, desc(Index), Y2011) # sort in descending order
+dt = mydata %>% select(Index, State) %>% sample_n(10) # piping example
+
+```
+
+```{r}
+t = mydata %>% filter(Index %in% c("A", "C","I")) %>% group_by(Index) %>% do(head( . , 2)) # filter data within categorical column
+t = mydata %>% group_by(Index)%>% summarise(Mean_2014 = mean(Y2014, na.rm=TRUE), Mean_2015 = mean(Y2015, na.rm=TRUE)) %>% arrange(desc(Mean_2015)) # summarise, group and sort together
+mydata1 = mutate(mydata, change=Y2015/Y2014) # create new column with mutate
+mydata12 = mutate_at(mydata, vars(Y2008:Y2010), funs(Rank=min_rank(.))) # ranking columns
+```
+
+Estudos de caso:
+
+```{r}
+out = mydata %>% group_by(Index) %>% filter(min_rank(desc(Y2015)) == 1) %>% select(Index, State, Y2015) # select State that generated highest income among the column Index
+out2 = mydata %>% group_by(Index) %>% mutate(Total=cumsum(Y2015)) %>% select(Index, Y2015, Total) # cumulative income of Index column
+
+```
+
+Fluxo normal:
+
+```{r}
+df1 = data.frame(ID = c(1, 2, 3, 4, 5),
+w = c('a', 'b', 'c', 'd', 'e'),
+x = c(1, 1, 0, 0, 1),
+y=rnorm(5),
+z=letters[1:5])
+df2 = data.frame(ID = c(1, 7, 3, 6, 8),
+a = c('z', 'b', 'k', 'd', 'l'),
+b = c(1, 2, 3, 0, 4),
+c =rnorm(5),
+d =letters[2:6])
+
+# INNER JOIN
+inner_join(df1, df2, by = c("ID"="ID"))
+# LEFT JOIN
+left_join(df1, df2, by = "ID")
+```
+
+```{r}
+mtcars$model <- rownames(mtcars)
+first <- mtcars[1:20, ]
+second <- mtcars[10:32, ]
+intersect(first, second) # intersect between data common in both data frames
+```
+
+```{r}
+x=data.frame(ID = 1:6, ID1= 1:6)
+y=data.frame(ID = 1:6,  ID1 = 1:6)
+union(x,y)
+union_all(x,y) # apply union
+```
+
+```{r}
+setdiff(first, second) # rows appears in one df but not in the other
+df <- c(-10,2, NA)
+if_else(df < 0, "negative", "positive", missing = "missing value") # if else with data frame
+```
+
+```{r}
+# nested if else
+mydf =data.frame(x = c(1:5,NA))
+mydf %>% mutate(newvar= if_else(is.na(x),"I am missing",
+if_else(x==1,"I am one",
+if_else(x==2,"I am two",
+if_else(x==3,"I am three","Others")))))
+```
+
+```{r}
+df = mydata %>% rowwise() %>% mutate(Max= max(Y2012,Y2013,Y2014,Y2015)) %>% select(Y2012:Y2015,Max) # row wise operation
+```
+
+```{r}
+df1=data.frame(ID = 1:6,  x=letters[1:6])
+df2=data.frame(ID = 7:12, x=letters[7:12])
+xy = bind_rows(df1,df2) # combine data frames with rows
+xy = bind_cols(x,y) # combine data frames with columns
+```
+
+```{r}
+# percentile
+mydata %>% group_by(Index) %>%
+summarise(Pecentile_25=quantile(Y2015, probs=0.25),
+Pecentile_50=quantile(Y2015, probs=0.5),
+Pecentile_75=quantile(Y2015, probs=0.75),
+Pecentile_99=quantile(Y2015, probs=0.99))
+
+# divide data into N bins
+x= data.frame(N= 1:10)
+x = mutate(x, pos = ntile(x$N,5))
+```
+
+```{r}
+mydata2 = select_if(mydata, is.numeric) # select column if it is numeric
+mydata3 = select_if(mydata, is.factor) # select factor column
+summarise_if(mydata, is.factor, funs(nlevels(.))) # summarise to check number of levels in factor columns
+mydata11 = mutate_if(mydata, is.numeric, funs("new" = .* 1000)) # multiply by 1000 to numeric columns
+k <- c("a", "b", "", "d")
+na_if(k, "") # convert value to NA
+iris %>% filter(Sepal.Length > 5.5) %>% pull(Species) # pull output from df to vector
+
+```
+
+```{r}
+t = mydata %>% select(Index, Y2015) %>%
+  group_by(Index) %>%
+  mutate(rank = min_rank(desc(Y2015)))%>% 
+  arrange(Index, rank) # to use SQL rank over partition by
+```
+
+```{r}
+mtcars %>% 
+  group_by(carb) %>% 
+  summarise(across(mpg:qsec, mean)) # performs same operation across multiple columns
+mtcars %>% 
+  group_by(carb) %>% 
+  summarise(across(where(is.numeric), mean))  
+mtcars %>% 
+  group_by(carb) %>% 
+  summarise(across(mpg:qsec, mean), across(vs:gear, n_distinct)) # multiple across
+mtcars %>% 
+  group_by(carb) %>% 
+  mutate(across(where(is.numeric), mean)) # with mutate
+
+```
+
 ### Exercício 10
 > Faça o tutorial sobre o package stringr disponível em https://cran.rstudio.com/web/packages/stringr/vignettes/stringr.html
 
+```{r}
+print(str_length("abc")) # finding length of string
+
+
+x <- c("abcdef", "ghifjk")
+print(str_sub(x, 3, 3)) # accessing third character in each string in x
+print(str_sub(x, 2, -2)) # accessing second and second to last character in the strings in x
+str_sub(x, 3, 3) <- "X" # modifying strings at a given position
+print(x)
+print(str_dup(x, c(2, 3))) # duplicating first string 2 times and second string 3 times
+x <- c("abc", "defghi")
+print(str_pad(x, 10)) # pad whitespace on left 
+print(str_pad(x, 10, "both")) # pad whitespace in both sides
+print(str_pad(x, 4)) # won't make strin shorter
+```
+
+```{r}
+x <- c("Short", "This is a long string")
+# ensure strings have same size
+x %>% 
+  str_trunc(10) %>% 
+  str_pad(10, "right")
+```
+
+```{r}
+# ensure the opposite
+x <- c("  a   ", "b   ",  "   c")
+str_trim(x)
+str_trim(x, "left")
+```
+
+```{r}
+jabberwocky <- str_c(
+  "`Twas brillig, and the slithy toves ",
+  "did gyre and gimble in the wabe: ",
+  "All mimsy were the borogoves, ",
+  "and the mome raths outgrabe. "
+)
+cat(str_wrap(jabberwocky, width = 40)) # ensure length of each line of a paragraph is similar as possible
+```
+
+```{r}
+x <- "I like horses."
+print(str_to_upper(x)) # upper case
+print(str_to_title(x)) # title
+print(str_to_lower(x)) # lower case
+print(str_to_lower(x, "tr")) # lower case located to turkish
+x <- c("y", "i", "k")
+print(str_order(x)) # order string and get indexes
+print(str_sort(x)) # order string and get elements
+str_sort(x, locale = "lt") # lower case located to lithuanian
+```
+
+```{r}
+strings <- c(
+  "apple", 
+  "219 733 8965", 
+  "329-293-8753", 
+  "Work: 579-499-7527; Home: 543.355.3679"
+)
+phone <- "([2-9][0-9]{2})[- .]([0-9]{3})[- .]([0-9]{4})"
+print(str_detect(strings, phone)) # identify which strings have valid phone numbers
+print(str_subset(strings, phone)) # detect if elements of a string matches a regex
+print(str_count(strings, phone)) # count how many phone numbers have in each string
+print(str_locate(strings, phone)) # locate where phone number is located in string
+print(str_locate_all(strings, phone)) # locate all matches
+print(str_extract(strings, phone)) # extract phone numbers to first match
+print(str_extract_all(strings, phone)) # extract phone numbers for all matches
+print(str_extract_all(strings, phone, simplify = TRUE)) # extract phone numbers for all matches with simplified structure
+print(str_match(strings, phone)) # return column for matches and other columns for subsets of the match
+print(str_match_all(strings, phone)) # same as before, but extract all matches
+print(str_replace(strings, phone, "XXX-XXX-XXXX")) # replace the occurrences of the first string by the second string for first match
+print(str_replace_all(strings, phone, "XXX-XXX-XXXX")) # same as before but replaces all matches
+print(str_split("a-b-c", "-")) # split string into fixed number of pieces
+print(str_split_fixed("a-b-c", "-", n = 2)) # same as before, but to variable number of pieces
+```
+
+```{r}
+# since there are mutiples ways to describe a char...
+a1 <- "\u00e1"
+a2 <- "a\u0301"
+print(c(a1, a2)) # this shows the same char, but with different codification
+print(a1 == a2) # thus they are not equal
+print(str_detect(a1, fixed(a2)))
+print(str_detect(a1, coll(a2))) # using coll allow to compare as a human would do
+i <- c("I", "İ", "i", "ı")
+print(i)
+print(str_subset(i, coll("i", ignore_case = TRUE))) # fetch match using human-language collation rules
+print(str_subset(i, coll("i", ignore_case = TRUE, locale = "tr"))) # same as before for turkish language
+```
+
+```{r}
+x <- "This is a sentence."
+print(str_split(x, boundary("word"))) # fetch boundaries between words and split them
+print(str_count(x, boundary("word"))) # print how many words were separated
+print(str_extract_all(x, boundary("word"))) # extract all matches
+print(str_split(x, "")) # the boundary character can be alternated
+print(str_count(x, "")) # this results in the string beeing separated in every char
+```
+
 ### Exercício 11
 > Faça novamente o exercício 8 da Parte 2, utilizando a biblioteca dplyr
+
+Já foi feito anteriormente.
