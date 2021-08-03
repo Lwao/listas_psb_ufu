@@ -1324,16 +1324,16 @@ pre code {
 <pre><code>## # A tibble: 10 x 19
 ##     year month   day dep_time sched_dep_time dep_delay arr_time sched_arr_time
 ##    &lt;int&gt; &lt;int&gt; &lt;int&gt;    &lt;int&gt;          &lt;int&gt;     &lt;dbl&gt;    &lt;int&gt;          &lt;int&gt;
-##  1  2013    10    21     1103           1105        -2     1229           1230
-##  2  2013    10    24      656            659        -3      940            955
-##  3  2013     4    16     1845           1845         0     2111           2110
-##  4  2013     5    12     2046           2015        31        4           2358
-##  5  2013    12    30     1828           1830        -2     2158           2205
-##  6  2013     3    31     1157           1200        -3     1430           1428
-##  7  2013     4    10       NA           1910        NA       NA           2132
-##  8  2013    12     4     1509           1510        -1     1820           1845
-##  9  2013    11    11     1540           1545        -5     1654           1705
-## 10  2013     3     1     1714           1719        -5     1909           1948
+##  1  2013     3    10     1341           1345        -4     1457           1453
+##  2  2013     5    23      657            700        -3      931            950
+##  3  2013     9    28     1343           1345        -2     1625           1650
+##  4  2013    10    11     1934           1934         0     2205           2226
+##  5  2013     9     4      948            955        -7     1056           1110
+##  6  2013     4    16     1627           1627         0     1823           1824
+##  7  2013     8    17     1257           1300        -3     1451           1505
+##  8  2013     5     9     2032           2012        20     2325           2330
+##  9  2013    11    26     1700           1700         0     2020           2025
+## 10  2013     3    31     1229           1235        -6     1539           1552
 ## # ... with 11 more variables: arr_delay &lt;dbl&gt;, carrier &lt;chr&gt;, flight &lt;int&gt;,
 ## #   tailnum &lt;chr&gt;, origin &lt;chr&gt;, dest &lt;chr&gt;, air_time &lt;dbl&gt;, distance &lt;dbl&gt;,
 ## #   hour &lt;dbl&gt;, minute &lt;dbl&gt;, time_hour &lt;dttm&gt;</code></pre>
@@ -1341,16 +1341,16 @@ pre code {
 <pre><code>## # A tibble: 3,368 x 19
 ##     year month   day dep_time sched_dep_time dep_delay arr_time sched_arr_time
 ##    &lt;int&gt; &lt;int&gt; &lt;int&gt;    &lt;int&gt;          &lt;int&gt;     &lt;dbl&gt;    &lt;int&gt;          &lt;int&gt;
-##  1  2013     7    30      854            855        -1     1142           1156
-##  2  2013     5    15     1452           1500        -8     1620           1640
-##  3  2013     4    12     1702           1530        92     2050           1834
-##  4  2013     1    14      823            828        -5     1049           1105
-##  5  2013    10     8     1422           1425        -3     1720           1731
-##  6  2013     7    30     1821           1824        -3     2111           2129
-##  7  2013     8    14      905            901         4     1224           1143
-##  8  2013     5    24     1811           1730        41     2037           1956
-##  9  2013     2    20     1754           1800        -6     2055           2101
-## 10  2013     7    16     1708           1710        -2     1946           2015
+##  1  2013     3    15      748            655        53      850            813
+##  2  2013     6     1      626            630        -4      900            916
+##  3  2013     8     2      559            600        -1      711            711
+##  4  2013     2    10     1329           1320         9     1659           1650
+##  5  2013     2    14     1625           1635       -10     1744           1810
+##  6  2013     6    19      758            756         2     1040           1037
+##  7  2013    10    26     1505           1505         0     1720           1709
+##  8  2013     7     6     1854           1856        -2     2035           2104
+##  9  2013     7    15      823            829        -6      947           1028
+## 10  2013    10    21     1001           1005        -4     1212           1217
 ## # ... with 3,358 more rows, and 11 more variables: arr_delay &lt;dbl&gt;,
 ## #   carrier &lt;chr&gt;, flight &lt;int&gt;, tailnum &lt;chr&gt;, origin &lt;chr&gt;, dest &lt;chr&gt;,
 ## #   air_time &lt;dbl&gt;, distance &lt;dbl&gt;, hour &lt;dbl&gt;, minute &lt;dbl&gt;, time_hour &lt;dttm&gt;</code></pre>
@@ -1552,27 +1552,27 @@ pre code {
 <div class="sourceCode" id="cb338"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb338-1"><a href="#cb338-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr) <span class="co"># load dplyr</span></span>
 <span id="cb338-2"><a href="#cb338-2" aria-hidden="true" tabindex="-1"></a>mydata <span class="ot">=</span> <span class="fu">read.csv</span>(<span class="st">&quot;https://raw.githubusercontent.com/deepanshu88/data/master/sampledata.csv&quot;</span>) <span class="co"># loading data from .csv hosted in url</span></span>
 <span id="cb338-3"><a href="#cb338-3" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(<span class="fu">sample_n</span>(mydata,<span class="dv">3</span>)) <span class="co"># random rows can be selected for visualization</span></span></code></pre></div>
-<pre><code>##   Index      State   Y2002   Y2003   Y2004   Y2005   Y2006   Y2007   Y2008
-## 1     A   Arkansas 1485531 1994927 1119299 1947979 1669191 1801213 1188104
-## 2     M   Missouri 1221316 1858368 1773451 1573967 1374863 1486197 1735099
-## 3     C California 1685349 1675807 1889570 1480280 1735069 1812546 1487315
+<pre><code>##   Index    State   Y2002   Y2003   Y2004   Y2005   Y2006   Y2007   Y2008
+## 1     M Missouri 1221316 1858368 1773451 1573967 1374863 1486197 1735099
+## 2     A  Alabama 1296530 1317711 1118631 1492583 1107408 1440134 1945229
+## 3     O   Oregon 1794912 1726665 1805445 1133510 1502242 1419251 1482786
 ##     Y2009   Y2010   Y2011   Y2012   Y2013   Y2014   Y2015
-## 1 1628980 1669295 1928238 1216675 1591896 1360959 1329341
-## 2 1800620 1164202 1425363 1800052 1698105 1767835 1996005
-## 3 1663809 1624509 1639670 1921845 1156536 1388461 1644607</code></pre>
+## 1 1800620 1164202 1425363 1800052 1698105 1767835 1996005
+## 2 1944173 1237582 1440756 1186741 1852841 1558906 1916661
+## 3 1862351 1103794 1935687 1905378 1522129 1509171 1893515</code></pre>
 <div class="sourceCode" id="cb340"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb340-1"><a href="#cb340-1" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(<span class="fu">sample_frac</span>(mydata,<span class="fl">0.1</span>)) <span class="co"># visualize  randomly percentage of rows</span></span></code></pre></div>
-<pre><code>##   Index       State   Y2002   Y2003   Y2004   Y2005   Y2006   Y2007   Y2008
-## 1     C Connecticut 1610512 1232844 1181949 1518933 1841266 1976976 1764457
-## 2     W  Washington 1977749 1687136 1199490 1163092 1334864 1621989 1545621
-## 3     I    Illinois 1508356 1527440 1493029 1261353 1540274 1747614 1871645
-## 4     O      Oregon 1794912 1726665 1805445 1133510 1502242 1419251 1482786
-## 5     N  New Jersey 1605532 1141514 1613550 1181452 1541327 1156804 1568034
+<pre><code>##   Index         State   Y2002   Y2003   Y2004   Y2005   Y2006   Y2007   Y2008
+## 1     N    New Jersey 1605532 1141514 1613550 1181452 1541327 1156804 1568034
+## 2     N New Hampshire 1419776 1854370 1195119 1990062 1645430 1286967 1762936
+## 3     C   Connecticut 1610512 1232844 1181949 1518933 1841266 1976976 1764457
+## 4     M      Missouri 1221316 1858368 1773451 1573967 1374863 1486197 1735099
+## 5     A        Alaska 1170302 1960378 1818085 1447852 1861639 1465841 1551826
 ##     Y2009   Y2010   Y2011   Y2012   Y2013   Y2014   Y2015
-## 1 1972730 1968730 1945524 1228529 1582249 1503156 1718072
-## 2 1555554 1179331 1150089 1775787 1273834 1387428 1377341
-## 3 1658551 1422021 1751422 1696729 1915435 1645465 1583516
-## 4 1862351 1103794 1935687 1905378 1522129 1509171 1893515
-## 5 1357418 1443718 1390010 1202326 1100990 1850165 1183568</code></pre>
+## 1 1357418 1443718 1390010 1202326 1100990 1850165 1183568
+## 2 1763211 1265642 1704297 1131298 1197576 1242623 1963313
+## 3 1972730 1968730 1945524 1228529 1582249 1503156 1718072
+## 4 1800620 1164202 1425363 1800052 1698105 1767835 1996005
+## 5 1436541 1629616 1230866 1512804 1985302 1580394 1979143</code></pre>
 <div class="sourceCode" id="cb342"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb342-1"><a href="#cb342-1" aria-hidden="true" tabindex="-1"></a>x1 <span class="ot">=</span> <span class="fu">distinct</span>(mydata) <span class="co"># eliminate duplicates in data on all columns</span></span>
 <span id="cb342-2"><a href="#cb342-2" aria-hidden="true" tabindex="-1"></a>x2 <span class="ot">=</span> <span class="fu">distinct</span>(mydata, Index, <span class="at">.keep_all=</span> <span class="cn">TRUE</span>) <span class="co"># same as before but maintains all other columns</span></span>
 <span id="cb342-3"><a href="#cb342-3" aria-hidden="true" tabindex="-1"></a>x2 <span class="ot">=</span> <span class="fu">distinct</span>(mydata, Index, Y2010, <span class="at">.keep_all=</span> <span class="cn">TRUE</span>) <span class="co"># remove duplicates rows based in multiples columns/variables</span></span>
@@ -2184,17 +2184,17 @@ pre code {
 <span id="cb368-11"><a href="#cb368-11" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb368-12"><a href="#cb368-12" aria-hidden="true" tabindex="-1"></a><span class="co"># INNER JOIN</span></span>
 <span id="cb368-13"><a href="#cb368-13" aria-hidden="true" tabindex="-1"></a><span class="fu">inner_join</span>(df1, df2, <span class="at">by =</span> <span class="fu">c</span>(<span class="st">&quot;ID&quot;</span><span class="ot">=</span><span class="st">&quot;ID&quot;</span>))</span></code></pre></div>
-<pre><code>##   ID w x         y z a b         c d
-## 1  1 a 1  1.128564 a z 1 -1.721153 b
-## 2  3 c 0 -0.936995 c k 3  1.934663 d</code></pre>
+<pre><code>##   ID w x         y z a b          c d
+## 1  1 a 1  1.972206 a z 1 -0.5240104 b
+## 2  3 c 0 -1.307584 c k 3  0.3802837 d</code></pre>
 <div class="sourceCode" id="cb370"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb370-1"><a href="#cb370-1" aria-hidden="true" tabindex="-1"></a><span class="co"># LEFT JOIN</span></span>
 <span id="cb370-2"><a href="#cb370-2" aria-hidden="true" tabindex="-1"></a><span class="fu">left_join</span>(df1, df2, <span class="at">by =</span> <span class="st">&quot;ID&quot;</span>)</span></code></pre></div>
-<pre><code>##   ID w x          y z    a  b         c    d
-## 1  1 a 1  1.1285643 a    z  1 -1.721153    b
-## 2  2 b 1 -0.8079217 b &lt;NA&gt; NA        NA &lt;NA&gt;
-## 3  3 c 0 -0.9369950 c    k  3  1.934663    d
-## 4  4 d 0  0.1221196 d &lt;NA&gt; NA        NA &lt;NA&gt;
-## 5  5 e 1  0.3013950 e &lt;NA&gt; NA        NA &lt;NA&gt;</code></pre>
+<pre><code>##   ID w x          y z    a  b          c    d
+## 1  1 a 1  1.9722055 a    z  1 -0.5240104    b
+## 2  2 b 1  0.9765914 b &lt;NA&gt; NA         NA &lt;NA&gt;
+## 3  3 c 0 -1.3075839 c    k  3  0.3802837    d
+## 4  4 d 0 -0.1302736 d &lt;NA&gt; NA         NA &lt;NA&gt;
+## 5  5 e 1 -0.3150981 e &lt;NA&gt; NA         NA &lt;NA&gt;</code></pre>
 <div class="sourceCode" id="cb372"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb372-1"><a href="#cb372-1" aria-hidden="true" tabindex="-1"></a>mtcars<span class="sc">$</span>model <span class="ot">&lt;-</span> <span class="fu">rownames</span>(mtcars)</span>
 <span id="cb372-2"><a href="#cb372-2" aria-hidden="true" tabindex="-1"></a>first <span class="ot">&lt;-</span> mtcars[<span class="dv">1</span><span class="sc">:</span><span class="dv">20</span>, ]</span>
 <span id="cb372-3"><a href="#cb372-3" aria-hidden="true" tabindex="-1"></a>second <span class="ot">&lt;-</span> mtcars[<span class="dv">10</span><span class="sc">:</span><span class="dv">32</span>, ]</span>
