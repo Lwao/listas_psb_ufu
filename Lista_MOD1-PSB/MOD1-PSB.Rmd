@@ -1,0 +1,1289 @@
+
+---
+title: "Lista do Módulo 1"
+author: "Levy Gabriel da Silva Galvão"
+output:
+  pdf_document:
+    toc: yes
+  html_document:
+    toc: yes
+    highlight: tango
+    includes:
+      after_body: psbfix.html
+---
+
+# Módulo 1
+## Parte 1
+### Exercício 1
+> Crie uma função em R para fazer a conversão entre unidades de temperatura (De Kelvin para Celcius). Forneça um exemplo de uso.
+
+```{r}
+kelvin2celsius <- function(temp_kelvin)
+{
+  temp_celsius <- temp_kelvin - 273.15
+  return(temp_celsius)
+}
+```
+
+Um exemplo para este caso é encontrar a temperatura padrão das condições normais de temperatura e pressão (CNTP) de 273.15 K em Celsius, resultando em:
+
+```{r}
+cntp_kelvin <- 273.15
+cntp_celsius <- kelvin2celsius(cntp_kelvin)
+print(cntp_celsius)
+```
+
+### Exercício 2
+> Crie um loop que imprima os valores ímpares no intervalo de 1 a 100.
+
+```{r}
+num <- 0
+for(num in 1:100)
+{
+  if(num %% 2) # if number is odd
+  {
+    print(num)
+  }
+}
+```
+### Exercício 3
+> Qual a diferença entre os operadores “&”, “&&”, “|” e “||”. Ilustre o uso destes operadores por meio de um programa exemplo.
+resposta
+
+Os operadores simples "&" e "|" atuam realizando a operação elemento a elemento (*element wise*) entre seus operandos, enquanto que os operadores "&&" e "||" executam a operação em um único elemento e, se utilizado entre *arrays*, a operação será feita somente no primeiro elemento. Vide exemplo abaixo.
+
+```{r}
+# test arrays
+x <- c(FALSE, FALSE, TRUE, TRUE)
+y <- c(FALSE, TRUE, FALSE, TRUE)
+# element wise operation
+print(x&y)
+print(x|y)
+# single element operation
+print(x&&y)
+print(x||y)
+```
+Pela distribuição dos *arrays*, permite-se traçar as tabelas verdades da operação AND por meio do operador "&" e da operação OR por meio do operador "|", enquanto que como o esperado os operadores duplos atuam somente nos primeiros elementos.
+
+### Exercício 4
+> Faça um programa que exemplifique o uso do operador “%in%”
+
+O operador "%in%" verifica se o conteúdo do *array* como primeiro operando está contido no *array* como segundo operando. O retorno é um *array* binário que pode ser usado para indexar todo o conteúdo do primeiro operando que está contido no segundo operando. Vide os exemplos abaixo.
+
+```{r}
+x <- c(0, 2, 4, 6)
+y <- 1:10
+# boolean array that indicates whether content of first operand is in the second operand
+print(x%in%y)
+# this result can be used to index all the content from the first operand that meets the requirements
+print(x[x%in%y])
+```
+### Exercício 5
+> Dado a string “O Sol é muito maior do que a Terra”, faça um programa que:
+
+- Substitua a palavra “Terra” por “Lua”
+- Conte o número de caracteres da string original e da string alterada;
+- Ordene a string alterada
+- Faça uma comparação usando o operador & entre a string alterada e original.
+- Explique o resultado obtido.
+- Utilize o operador == para identificar os caracteres iguais.
+
+O primeiro passo é substituir o trecho "Terra" da *string* por "Lua", resultando em (com o auxílio da biblioteca **stringr**):
+
+```{r}
+library(stringr) # library to handle strings
+str_ <- "O Sol é muito maior do que a Terra"
+str_new <- str_replace(str_, "Terra", "Lua")
+print(str_new)
+```
+Assim, o número de caracteres da *string* original será:
+
+```{r}
+print(str_length(str_))
+```
+
+E da *string* modificada:
+
+```{r}
+print(str_length(str_new))
+```
+Assim, mostrando que, uma vez que a palavra inserida "Lua" np lugar de "Terra" por ter uma quantidade de caracteres menor, permitiu que a nova *string* modificada possua, também, menos caracteres.
+
+O próximo passo é ordenar os caracteres da *string* modificada, resultando em:
+
+```{r}
+str_splited = unlist(strsplit(str_new, "")) # split string to get characters
+str_sorted <- str_sort(str_splited) # sorting in ascending order
+str_merged <- str_c(str_sorted, collapse="")
+print(str_merged)
+```
+
+O passo seguinte é comparar a *string* alterada com a original com meio do operador "&" elemento a elemento.
+
+```{r, error=TRUE}
+print(str_merged & str_new)
+```
+A operação AND elemento a elemento não é definida para *strings* ou caracteres, por isso o erro persiste.
+
+Porém a comparação de igualdade "==" existe e, por meio do vetor de caracteres, pode-se definir um vetor comparando quais caracteres são iguais.
+
+```{r}
+print(unlist(strsplit(str_new, "")) == unlist(strsplit(str_, "")))
+```
+Apesar das *strings* diferirem no tamanho (a nova *string* é menor), a operação de igualdade ainda é feita, porém com um aviso. O vetor booleano resultante possuirá o tamanho da maior *string* e os últimos elementos que não existem na *string* menor serão preenchidos com FALSE.
+
+
+### Exercício 6
+> Refaça todos os exemplos apresentados neste módulo Parte 1.
+
+```{r}
+meuTexto <- "Bom dia!" # com comentarios para teste
+print(meuTexto)
+```
+
+```{r}
+class(meuTexto)
+```
+
+```{r}
+v <- 100
+class(v)
+```
+
+```{r}
+v <- "100"
+class(v)
+```
+
+```{r}
+v <- F
+class(v)
+```
+
+```{r}
+v <- 100L 
+class(v)
+```
+
+```{r}
+v <- 6 + 8i
+class(v)
+```
+
+```{r}
+minhaVariavel <- 1
+m_var <- 1
+.mvar <- 1 # hiden object
+```
+
+```{r}
+x <- 100 # 100 stored in x
+print(x)
+y <- 200 + 300 # 100 stored in y
+print(y)
+z <- x + y 
+print(z)
+100 -> x # works fine as in x <- 100
+v_cor <- c('azul', 'amarelo', 'rosa')
+print(v_cor)
+v01 <- c(3,4,5)
+print(v01)
+```
+
+```{r}
+cat(v01) # print on screen or file
+```
+
+```{r}
+ls() # show variables
+```
+
+```{r}
+ls(pattern = "v") # variables with char v
+```
+
+```{r, error=TRUE}
+meuTexto <- "texto"
+rm(meuTexto) # remove variable from workspace
+print(meuTexto)
+```
+
+```{r}
+a1 <- c(9, 0, -4)
+a2 <- c(8, 2, -1)
+
+print(a1 + a2) # sum
+
+s1 <<- c(1, 2, 3)
+c(4, 5, 2) ->> s2
+
+print(s1-s2) # subtraction
+
+m1 <- c(2, 5, 8)
+m2 <- c(3, 6, 9)
+print(m1*m2) # multiplication
+
+d1 <- c(6,8,9)
+d2 <- c(2,4,3)
+print(d1/d2) # division
+
+r1 <- c(10, 13, 19)
+r2 <- c(3, 4, 5)
+print(r1%%r2) # module operation
+
+r1 <- c(10, 13, 19)
+r2 <- c(3, 4, 5)
+print(r1 %/% r2) # division quocient
+
+e1 <- c(2, 3, 4)
+e2 <- c(3, 2, 2)
+print(e1^e2) # exponenciation
+
+g1 <- c(6,8,9)
+g2 <- c(9,2,6)
+print(g1>g2) # greather then
+
+g1 <- c(6, 8, 9)
+g2 <- c(9,2, 6)
+print(g1<g2) # less then
+
+e1 <- c(3, 6, 9)
+e2 <- c(2, 7, 9)
+print(e1==e2) # equal
+
+e1 <- c(3, 6, 9)
+e2 <- c(2, 7, 9)
+print(e1 >= e2) # greather then and equal
+
+e1 <- c(3, 6, 9)
+e2 <- c(2, 7, 9)
+print(e1 <= e2) # less then and equal
+
+e1 <- c(3, 6, 9)
+e2 <- c(2, 7, 9)
+
+print(e1!=e2) # different
+
+x <- c(TRUE,FALSE,0,6)
+y <- c(FALSE,TRUE,FALSE,TRUE)
+
+print(!x) # element wise NOT
+print(x&y) # element wise AND 
+print(x&&y) # AND in first element
+print(x|y) # element wise OR
+print(x||y) # OR in first element
+
+v <- 1:8 
+print(v) # range
+```
+
+```{r}
+1:3==1:3 && 1:3==1:3
+```
+
+```{r}
+x <- 1:5
+x[x<5]
+```
+
+```{r}
+x[x<5 & x>2]
+```
+
+```{r}
+x[x<5 && x>2]
+```
+
+```{r}
+v1 <- 6
+v2 <- 15
+m <- 1:8
+
+print(v1 %in% m) # is in
+print(v2 %in% m) # is in
+```
+
+```{r}
+x <- 1:10
+print(x)
+y <- c(1,3:11)
+print(y)
+```
+
+```{r}
+x[x%in%y]
+```
+
+```{r}
+y[y%in%x]
+```
+
+```{r}
+y[x%in%y] # wrong indexing
+```
+
+```{r}
+m <- 200
+n <- 100
+
+if(m>n){ # if
+  print("m é maior do que n")
+}
+```
+
+```{r}
+m <- 200
+n <- 100
+
+if(m<n){ # if then else
+  print("m é menor do que n")
+} else {
+  print("m é maior do que n")
+}
+```
+
+```{r}
+#switch
+
+var <- "vegetal"
+
+switch(var,
+       fruit = "maçã",
+       vegetal = "espinafre",
+       carne = "frango")
+```
+
+```{r}
+# repeat
+var <- c("Very Good!")
+num <- 0
+
+repeat{
+  print(var)
+  num <- num + 1
+  if(num > 5){
+    
+    break # para o loop
+  }
+}
+```
+
+```{r}
+#while
+
+var <- c("OLA")
+num <- 0
+
+while(num<5){
+  print(var)
+  num <- num + 1
+}
+```
+
+```{r}
+#for
+
+var <- c(1:5)
+
+for(num in var)
+{
+  print("ola")
+  
+}
+```
+
+```{r}
+#for
+
+var <- c(1:5)
+
+for(num in var)
+{
+  print("ola")
+  
+}
+```
+
+```{r}
+# function
+
+myfunction <- function(x,y)
+{
+  num <- x + y
+  return(num)
+  
+}
+
+a <- myfunction(100, 200)
+print(a)
+```
+
+```{r}
+myfunction <- function(x,y)
+{
+  num <- 300 + 400
+  return(num)
+  
+}
+
+a <- myfunction()
+print(a)
+```
+
+```{r}
+myfunction <- function(x=3,y=5)
+{
+  num <- x + y
+  return(num)
+}
+
+a <- myfunction()
+print(a)
+```
+
+```{r}
+print(sum(200, 100))
+print(abs(-1000))
+print(max(100, 200))
+print(min(100, 200))
+print(sqrt(81))
+```
+
+```{r}
+num <- c(2, 8, 5, 9, 3)
+print(sort(num))
+```
+
+```{r}
+library(stringr) # calling library
+```
+
+```{r}
+x <- c("why", "video", "cross", "extra", "deal", "authority")
+str_length(x)
+```
+
+```{r}
+str_c(x, collapse = ", ")
+```
+
+```{r}
+str_sub(x, start = 1, end = 2)
+```
+
+```{r}
+m_str <- format(100)
+print(m_str)
+```
+
+```{r}
+# str cat
+a <- "R"
+b <- "em"
+c <- "8"
+d <- "horas"
+
+str_c(a,b, sep = " ")
+```
+
+```{r}
+paste(a,b,c,d)
+```
+
+```{r}
+str <- "Engenharia Biomédica - UFU"
+str_length(str)
+```
+
+```{r}
+str <- "ENGENHARIA BIOMÉDICA - UFU"
+str_to_lower(str)
+```
+
+```{r}
+str <- "engenharia biomédica - ufu"
+str_to_upper(str)
+```
+
+```{r}
+str <- "engenharia biomédica - ufu"
+str_to_title(str)
+```
+
+```{r}
+str <- "engenharia biomédica - ufu"
+str_replace(str,'ufu', "UFU")
+```
+
+## Parte 2
+### Exercício 7
+> Refaça todos os exemplos apresentados neste módulo Parte 2.
+
+
+```{r}
+# integer vector
+v.inteiro <- integer(10)
+v.inteiro <- c(1:10)
+
+# double vector
+v.double <- numeric(10)
+v.double <- c(2.5, c(1:9))
+
+# logical vector
+v.logical <- logical(10)
+v.logical <- c(F, T, F, F, T, F, T, T, T, F)
+
+# complex vector
+v.complex <- complex(10)
+v.complex <- c(1+2i, 3+1i, 5-4i, 9-0.1i, 10-54i,
+               100-1i, -2-2i, 3+3i, 10-0i, 8)
+
+# raw vector
+v.raw <- raw(length = 5) 
+rawToChar(v.raw)
+```
+
+```{r}
+v.raw[1] <- as.raw(10)
+rawToChar(v.raw[1])
+```
+
+```{r}
+v.raw[2] <- as.raw(5)
+rawToChar(v.raw[2])
+```
+
+```{r}
+print("céu azul") # vector of chars
+print("98.1") # double
+print(2:8) # integer vector
+print(1.8:6.8) # double vector
+print (c(3,4,5)) # also integer vector
+print(c("apple", "banana", "cherry")) # string vector
+```
+
+```{r}
+seq(from = 1, to=2, by = 0.1) # ranging vector
+```
+
+```{r, error=TRUE}
+v1 <- seq(from=0, to=2, by =0.1) 
+print(v1)
+print(v1[1])
+print(v1[c(1, 4)])
+v2 <- c("maçã", "banana", "amora")
+print(v2[2])
+print(v2[c(1, 3)])
+v3 <- c("maçã", "banana", "amora")
+print(v3[c(FALSE, TRUE, FALSE)]) # only true values are displayed
+v2 <- c("maçã", "banana", "amora")
+print(v2)
+print(v2[-2]) # removing second element
+
+v1 <- c(1, 2, 3)
+v2 <- c(4, 5, 6)
+
+print(v1 + v2) # vector sum
+print(v1 - v2) # vector sub
+print(v1 * v2) # vector mul
+print(v1/v2) # vector div
+
+v1 <- c(4,5,6,7,8,9)
+v2 <- c(2,3)
+r <- v1 + v2
+
+print(r)print(v2 - v1)
+
+v<-c(1:10)
+print(sort(v, decreasing = TRUE))
+a<-seq(from=-1, to=1, by = 0.1)
+print(sort(a, decreasing = FALSE))
+ml <- list("a", "b", "c", "d")
+print(ml)
+print(ml[2])
+ml[5] <- 45.67
+print(ml)
+ml[5] <- NULL
+print(ml)
+ml[2] <- "atualizei o segundo elemento"
+print(ml[2])
+l1 <- list("a", "b", 2)
+l2 <- list("d", "e", 3)
+l12  <- c(l1, l2)
+print(l12)
+v12 <- unlist(l12)
+print(v12)
+
+v <- c(1:12)
+vnames <- list( 
+  c("row1", "row2"), # row names
+  c("col1", "col2", "col3","col4","col5","col6")) # column names
+
+m <- matrix(v, nrow = 2, ncol = 6, byrow = TRUE, dimnames = vnames)
+
+print(m)
+
+m <- matrix(v, nrow = 2, ncol = 6, byrow = FALSE, dimnames = vnames)
+
+print(m)
+print(m[2,3])
+print(m[1,3])
+print(m[2,6])
+print(m[1,4])
+
+m2 <- matrix(c(4,5,6,7,8,9), nrow = 2)
+print(m2)
+
+print(m2 + m2)
+print(m2 - m2)
+print(m2 * m2) 
+print(m2/3*m2) 
+
+rownames <- c("r1", "r2", "r3")
+colnames <- c("c1", "c2", "c3",  "c4")
+
+m1 <- matrix(c(1:12), nrow = 3, ncol = 4, dimnames = list(rownames, colnames))
+
+print(m1)
+
+M1 = matrix(c(46,  41,  85,  94,  10,  21,  27,  39,  89), nrow = 3)
+
+M2 = matrix(c(26,  54,  39,  32,  62,  85,  19,  57,  38), nrow = 3)
+
+## multiplication
+M_prod = M1 %*% M2
+
+print(M_prod); cat("\n")
+
+M_transp = t(M1)
+
+print(M_transp); cat("\n")
+```
+
+```{r}
+M1 = matrix(c(46,  41,  85,  94,  10,  21,  27,  39,  89), nrow = 3)
+M2 = matrix(c(26,  54,  39,  32,  62,  85,  19,  57,  38), nrow = 3)
+det(M1) # determinant of matrix
+```
+
+```{r}
+M_inversa = solve(M1)
+
+print(M_inversa); cat("\n")
+```
+
+```{r}
+solve(M1)%*%M1
+```
+
+```{r}
+sum(diag(M1))
+```
+
+```{r}
+crossprod(M1,M2)   # M1'M2
+```
+
+```{r}
+kronecker(M1, M2)
+```
+
+```{r}
+print(array(1:8))
+print(array(1:8, dim = c(2,4)))
+print(array(1:16, dim = c(2,4,2))) 
+
+rowname <- c("r1", "r2", "r3")
+colname <- c("c1", "c2", "c3")
+matrixname <- c("m1", "m2")
+
+marray <- array(1:18, dim = c(3,3,2),
+                dimnames = list(rowname, 
+                                colname,
+                                matrixname))
+
+print(marray)
+
+print( marray[2, 3 ,1] )
+print(marray[,,1])
+print(marray[2,,1])
+
+vector1 <- c(1,2,3)
+vector2 <- c(4,5,6,7,8,9)
+
+marray <- array(c(vector1, vector2),
+                dim = c(3,3,1))
+
+print(marray)
+
+result1 <- apply(marray, c(1), sum)
+print(result1)
+```
+
+```{r}
+result2 <- apply(marray, c(2), sum)
+apply(marray, c(3), sum)
+```
+
+```{r}
+result3 <- apply(marray, c(3), sort)
+print(result3)
+myfactor <- factor(1:5, levels=1:8, labels = c("a"))
+print(myfactor)
+data <- c("A", "C", "B", "B", "C", "A")
+myfactor <- factor(data)
+print(myfactor)
+myfactor <- factor(1:5, levels = 1:3,
+                   labels=c("a", "b", "c"))
+
+print(myfactor)
+data <- c("A", "C", "B", "B", "C", "A")
+myfactor <- factor(data, labels=c("maçã", "banana", "uva"))
+print(myfactor)
+myfactor <- factor(c("A", "B","C"),
+                   levels = c("C", "B", "A"))
+print(myfactor)
+L <- gl(4,2, labels = c("A", "B", "C", "D"))
+print(L)
+L <- gl(4,5, labels = c("A", "B", "C", "D"))
+print(L)
+```
+
+```{r}
+sex <- factor(c("male", "female", "female", "male"))
+
+levels(sex)
+```
+
+```{r}
+nlevels(sex)
+```
+
+```{r}
+food <- factor(c("low", "high", "medium", "high", "low", "medium", "high"))
+levels(food)
+```
+
+```{r}
+food <- factor(food, levels = c("low", "medium", "high"))
+levels(food)
+```
+
+```{r}
+food <- factor(food, levels = c("low", "medium", "high"), ordered = TRUE)
+levels(food)
+```
+
+```{r}
+exercise <- factor(c("l", "n", "n", "i", "l"), levels = c("n", "l", "i"), ordered = TRUE)
+print(exercise)
+```
+
+```{r}
+df <- data.frame(
+  id = c(1:5),
+  name = c("Silvana", "João", "Maria", "Roberto", "Carla"),
+  score = c(85,99,95,92,96),
+  year = c("2009", "2002", "2008", "2006", "2007"),
+  stringsAsFactors = FALSE
+)
+
+print(df)
+```
+
+```{r}
+str(df)
+```
+
+```{r}
+summary(df)
+```
+
+```{r}
+print(df$id)
+print(df$name)
+print(df$score)
+print(df$year)
+
+df$idade <- c(30,40,17,12,98)
+print(df)
+
+newRows <- data.frame(
+  
+  id = c(6,7),
+  name = c("Rui", "Alana"),
+  score = c(100, 33),
+  year = c("1999", "1997"),
+  idade = c(43, 33),
+  stringsAsFactors = FALSE
+  
+)
+
+df <- rbind(df, newRows)
+print(df)
+
+id <- c("001", "002", "003", "004")
+name <- c("Anna", "Judy", "Tony", "Nacy")
+age <- c(18, 16, 20, 19)
+
+members <- cbind(id, name,age)
+print(members)
+```
+
+```{r}
+library(dplyr)
+library(nycflights13)
+dim(flights)
+```
+
+```{r}
+str(flights)
+```
+
+```{r}
+filter(flights, month == 1, day == 1)
+```
+
+```{r}
+arrange(flights, dep_time, day, month, year)
+```
+
+```{r}
+arrange(flights, dep_time, desc(day), month, year)
+```
+
+```{r}
+select(flights, year, month, day)
+```
+
+```{r}
+rename(flights, tail_num = tailnum)
+```
+
+
+```{r}
+mutate(flights,
+  gain = arr_delay - dep_delay,
+  speed = distance / air_time * 60
+)
+```
+
+```{r}
+transmute(flights,
+  gain = arr_delay - dep_delay,
+  gain_per_hour = gain / (air_time / 60)
+)
+```
+
+```{r}
+summarise(flights,
+  delay = mean(dep_delay, na.rm = TRUE)
+)
+```
+
+```{r}
+sample_n(flights, 10)
+```
+
+```{r}
+sample_frac(flights, 0.01)
+```
+
+```{r}
+by_tailnum <- group_by(flights, tailnum) 
+
+delay <- summarise(by_tailnum, 
+  count = n(),
+  dist = mean(distance, na.rm = TRUE),
+  delay = mean(arr_delay, na.rm = TRUE))
+
+delay <- filter(delay, count > 20, dist < 2000) 
+
+daily <- group_by(flights, year, month, day)
+(per_day   <- summarise(daily, flights = n()))
+```
+
+```{r}
+select(flights, year)
+```
+
+```{r}
+select(flights, 1)
+```
+
+```{r}
+select(flights, starts_with("dep"))
+```
+
+```{r}
+# Piping
+a1 <- group_by(flights, year, month, day)
+a2 <- select(a1, arr_delay, dep_delay)
+a3 <- summarise(a2,
+  arr = mean(arr_delay, na.rm = TRUE),
+  dep = mean(dep_delay, na.rm = TRUE))
+a4 <- filter(a3, arr > 30 | dep > 30)
+
+# or...
+flights %>%
+  group_by(year, month, day) %>%
+  select(arr_delay, dep_delay) %>%
+  summarise(
+    arr = mean(arr_delay, na.rm = TRUE),
+    dep = mean(dep_delay, na.rm = TRUE)
+  ) %>%
+  filter(arr > 30 | dep > 30)
+```
+
+### Exercício 8
+> Faça um programa em R que avalie o nível de atividade física dos estudantes da disciplina de Processamento de Sinais Biomédicos.
+
+As seguintes variáveis devem ser consideradas:
+
+- Identificador do participante (id)
+- Curso do participante (cp)
+- Período do curso (pc)
+- Idade (idade)
+- Peso (peso)
+- Altura (altura)
+- Nível de atividade física (nat)
+  - nat = “nula” - nenhuma vez por semana
+  - nat = “baixa” - de uma a duas vezes por semana
+  - nat = “moderada” - três a cinco vezes por semana
+  - nat = “avançada” - acima de cinco vezes por semana
+
+> Construa um data frame que armazene as variáveis coletadas e faça os seguintes cálculos:
+
+- Número de participantes por cada uma das categorias de nível de atividade fisica (nat)
+- Percentual de participantes por cada uma das categorias de nível de atividade fisica (nat)
+- Valor médios das variáveis: idade, peso e altura (calcular os valores médios globais, por período de curso e por curso)
+
+```{r}
+library(dplyr)
+df <- data.frame( # it was used generic data
+  id = 1:5,
+  cp = c("curso 1", "curso 1", "curso 2", "curso 1", "curso 2"),
+  pc = c(5, 2, 4, 9, 9),
+  peso = c(40, 80, 90, 50, 60),
+  idade = c(20, 22, 21, 19, 18),
+  altura = c(180, 129, 160, 170, 180),
+  nat = c("avançada", "nula", "nula", "moderada", "baixa")
+)
+```
+Segue abaixo o número de participantes por cada nível de atividade física:
+
+```{r}
+partPerNat <- df %>% count(nat)
+print(partPerNat)
+```
+
+Agora o dado anterior com a opção em formato percentual inserida:
+
+```{r}
+numberOfParticipants <- sum(partPerNat$n)
+partPerNat$percentual <- partPerNat$n * (100/numberOfParticipants)
+print(partPerNat)
+```
+
+O próximo passo é calcular a média dos valores numéricos peso, idade e altura do *data frame* para várias situações diferentes. Será utilizado o vetor abaixo para indexar as colunas desejadas:
+
+
+```{r}
+idxCol <- c("peso", "idade", "altura") # selected columns
+```
+
+A primeira consiste nos valoes médios globais, resultando em:
+
+```{r}
+df_globalMean <- colMeans(df[idxCol], na.rm=TRUE)
+print(df_globalMean)
+```
+
+Outro quesito é realizar a média baseados em valores filtrados por período de curso, resultando em (nesse caso será exemplificado considerando o nono período):
+
+```{r}
+selectedPeriod <- 9
+df_sortedByPeriod <- df %>% filter(pc == selectedPeriod) 
+df_periodMean <- colMeans(df_sortedByPeriod[idxCol], na.rm=TRUE)
+print(df_periodMean)
+```
+
+
+Por fim, filtrando por curso (nesse caso será exemplificado considerando o curso 1):
+
+```{r}
+selectedCourse <- "curso 1"
+df_sortedByCourse <- df %>% filter(cp == selectedCourse) 
+df_courseMean <- colMeans(df_sortedByCourse[idxCol], na.rm=TRUE)
+print(df_courseMean)
+```
+
+## Parte 3
+### Exercício 9
+> Faça o tutorial sobre o package dplyr disponível em https://www.listendata.com/2016/08/dplyr-tutorial.html
+
+
+```{r}
+library(dplyr) # load dplyr
+mydata = read.csv("https://raw.githubusercontent.com/deepanshu88/data/master/sampledata.csv") # loading data from .csv hosted in url
+print(sample_n(mydata,3)) # random rows can be selected for visualization
+print(sample_frac(mydata,0.1)) # visualize  randomly percentage of rows
+x1 = distinct(mydata) # eliminate duplicates in data on all columns
+x2 = distinct(mydata, Index, .keep_all= TRUE) # same as before but maintains all other columns
+x2 = distinct(mydata, Index, Y2010, .keep_all= TRUE) # remove duplicates rows based in multiples columns/variables
+mydata2 = select(mydata, Index, State:Y2008) # select some columns of a data frame
+select(mydata, -Index, -State) # drop selected columns
+select(mydata, -c(Index,State)) # same results as before, but different syntax
+mydata3 = select(mydata, starts_with("Y")) # select columns that starts according to key char/word
+mydata33 = select(mydata, -starts_with("Y")) # same as before, but instead selecting it drops any column that matches
+mydata4 = select(mydata, contains("I")) # select columns that contains char/word
+mydata5 = select(mydata, State, everything()) # keeps column State in front of every other one
+rename(mydata, Index1=Index) # rename column
+mydata7 = filter(mydata, Index == "A") # filter subset that matches condition in argument
+mydata7 = filter(mydata, Index %in% c("A", "C")) # multiple filter criteria
+mydata8 = filter(mydata, Index %in% c("A", "C") & Y2002 >= 1300000 ) # using AND in condition
+mydata9 = filter(mydata, Index %in% c("A", "C") | Y2002 >= 1300000) # using OR in condition
+mydata10 = filter(mydata, !Index %in% c("A", "C")) # using NOT in condition
+mydata10 = filter(mydata, grepl("Ar", State)) # search for pattern matches that contains argument
+summarise(mydata, Y2015_mean = mean(Y2015), Y2015_med=median(Y2015)) # mean and median
+summarise_at(mydata, vars(Y2005, Y2006), list(n=~n(), mean=mean, median=median)) # summarise multiples columns
+summarise_at(mydata, vars(Y2011, Y2012),funs(mean, median), na.rm = TRUE) # add additional arguments from code above
+summarise_if(mydata, is.numeric, funs(n(),mean,median)) # summarise if attends to condition
+numdata = mydata[sapply(mydata,is.numeric)] # other method
+summarise_all(numdata, funs(n(),mean,median)) # other method
+summarise_all(mydata["Index"], funs(nlevels(.), nmiss=sum(is.na(.)))) # check levels and count missing observations
+arrange(mydata, Index, Y2011) # sort data by columns
+arrange(mydata, desc(Index), Y2011) # sort in descending order
+dt = mydata %>% select(Index, State) %>% sample_n(10) # piping example
+
+```
+
+```{r}
+t = mydata %>% filter(Index %in% c("A", "C","I")) %>% group_by(Index) %>% do(head( . , 2)) # filter data within categorical column
+t = mydata %>% group_by(Index)%>% summarise(Mean_2014 = mean(Y2014, na.rm=TRUE), Mean_2015 = mean(Y2015, na.rm=TRUE)) %>% arrange(desc(Mean_2015)) # summarise, group and sort together
+mydata1 = mutate(mydata, change=Y2015/Y2014) # create new column with mutate
+mydata12 = mutate_at(mydata, vars(Y2008:Y2010), funs(Rank=min_rank(.))) # ranking columns
+```
+
+Estudos de caso:
+
+```{r}
+out = mydata %>% group_by(Index) %>% filter(min_rank(desc(Y2015)) == 1) %>% select(Index, State, Y2015) # select State that generated highest income among the column Index
+out2 = mydata %>% group_by(Index) %>% mutate(Total=cumsum(Y2015)) %>% select(Index, Y2015, Total) # cumulative income of Index column
+
+```
+
+Fluxo normal:
+
+```{r}
+df1 = data.frame(ID = c(1, 2, 3, 4, 5),
+w = c('a', 'b', 'c', 'd', 'e'),
+x = c(1, 1, 0, 0, 1),
+y=rnorm(5),
+z=letters[1:5])
+df2 = data.frame(ID = c(1, 7, 3, 6, 8),
+a = c('z', 'b', 'k', 'd', 'l'),
+b = c(1, 2, 3, 0, 4),
+c =rnorm(5),
+d =letters[2:6])
+
+# INNER JOIN
+inner_join(df1, df2, by = c("ID"="ID"))
+# LEFT JOIN
+left_join(df1, df2, by = "ID")
+```
+
+```{r}
+mtcars$model <- rownames(mtcars)
+first <- mtcars[1:20, ]
+second <- mtcars[10:32, ]
+intersect(first, second) # intersect between data common in both data frames
+```
+
+```{r}
+x=data.frame(ID = 1:6, ID1= 1:6)
+y=data.frame(ID = 1:6,  ID1 = 1:6)
+union(x,y)
+union_all(x,y) # apply union
+```
+
+```{r}
+setdiff(first, second) # rows appears in one df but not in the other
+df <- c(-10,2, NA)
+if_else(df < 0, "negative", "positive", missing = "missing value") # if else with data frame
+```
+
+```{r}
+# nested if else
+mydf =data.frame(x = c(1:5,NA))
+mydf %>% mutate(newvar= if_else(is.na(x),"I am missing",
+if_else(x==1,"I am one",
+if_else(x==2,"I am two",
+if_else(x==3,"I am three","Others")))))
+```
+
+```{r}
+df = mydata %>% rowwise() %>% mutate(Max= max(Y2012,Y2013,Y2014,Y2015)) %>% select(Y2012:Y2015,Max) # row wise operation
+```
+
+```{r}
+df1=data.frame(ID = 1:6,  x=letters[1:6])
+df2=data.frame(ID = 7:12, x=letters[7:12])
+xy = bind_rows(df1,df2) # combine data frames with rows
+xy = bind_cols(x,y) # combine data frames with columns
+```
+
+```{r}
+# percentile
+mydata %>% group_by(Index) %>%
+summarise(Pecentile_25=quantile(Y2015, probs=0.25),
+Pecentile_50=quantile(Y2015, probs=0.5),
+Pecentile_75=quantile(Y2015, probs=0.75),
+Pecentile_99=quantile(Y2015, probs=0.99))
+
+# divide data into N bins
+x= data.frame(N= 1:10)
+x = mutate(x, pos = ntile(x$N,5))
+```
+
+```{r}
+mydata2 = select_if(mydata, is.numeric) # select column if it is numeric
+mydata3 = select_if(mydata, is.factor) # select factor column
+summarise_if(mydata, is.factor, funs(nlevels(.))) # summarise to check number of levels in factor columns
+mydata11 = mutate_if(mydata, is.numeric, funs("new" = .* 1000)) # multiply by 1000 to numeric columns
+k <- c("a", "b", "", "d")
+na_if(k, "") # convert value to NA
+iris %>% filter(Sepal.Length > 5.5) %>% pull(Species) # pull output from df to vector
+
+```
+
+```{r}
+t = mydata %>% select(Index, Y2015) %>%
+  group_by(Index) %>%
+  mutate(rank = min_rank(desc(Y2015)))%>% 
+  arrange(Index, rank) # to use SQL rank over partition by
+```
+
+```{r}
+mtcars %>% 
+  group_by(carb) %>% 
+  summarise(across(mpg:qsec, mean)) # performs same operation across multiple columns
+mtcars %>% 
+  group_by(carb) %>% 
+  summarise(across(where(is.numeric), mean))  
+mtcars %>% 
+  group_by(carb) %>% 
+  summarise(across(mpg:qsec, mean), across(vs:gear, n_distinct)) # multiple across
+mtcars %>% 
+  group_by(carb) %>% 
+  mutate(across(where(is.numeric), mean)) # with mutate
+
+```
+
+### Exercício 10
+> Faça o tutorial sobre o package stringr disponível em https://cran.rstudio.com/web/packages/stringr/vignettes/stringr.html
+
+```{r}
+print(str_length("abc")) # finding length of string
+
+
+x <- c("abcdef", "ghifjk")
+print(str_sub(x, 3, 3)) # accessing third character in each string in x
+print(str_sub(x, 2, -2)) # accessing second and second to last character in the strings in x
+str_sub(x, 3, 3) <- "X" # modifying strings at a given position
+print(x)
+print(str_dup(x, c(2, 3))) # duplicating first string 2 times and second string 3 times
+x <- c("abc", "defghi")
+print(str_pad(x, 10)) # pad whitespace on left 
+print(str_pad(x, 10, "both")) # pad whitespace in both sides
+print(str_pad(x, 4)) # won't make strin shorter
+```
+
+```{r}
+x <- c("Short", "This is a long string")
+# ensure strings have same size
+x %>% 
+  str_trunc(10) %>% 
+  str_pad(10, "right")
+```
+
+```{r}
+# ensure the opposite
+x <- c("  a   ", "b   ",  "   c")
+str_trim(x)
+str_trim(x, "left")
+```
+
+```{r}
+jabberwocky <- str_c(
+  "`Twas brillig, and the slithy toves ",
+  "did gyre and gimble in the wabe: ",
+  "All mimsy were the borogoves, ",
+  "and the mome raths outgrabe. "
+)
+cat(str_wrap(jabberwocky, width = 40)) # ensure length of each line of a paragraph is similar as possible
+```
+
+```{r}
+x <- "I like horses."
+print(str_to_upper(x)) # upper case
+print(str_to_title(x)) # title
+print(str_to_lower(x)) # lower case
+print(str_to_lower(x, "tr")) # lower case located to turkish
+x <- c("y", "i", "k")
+print(str_order(x)) # order string and get indexes
+print(str_sort(x)) # order string and get elements
+str_sort(x, locale = "lt") # lower case located to lithuanian
+```
+
+```{r}
+strings <- c(
+  "apple", 
+  "219 733 8965", 
+  "329-293-8753", 
+  "Work: 579-499-7527; Home: 543.355.3679"
+)
+phone <- "([2-9][0-9]{2})[- .]([0-9]{3})[- .]([0-9]{4})"
+print(str_detect(strings, phone)) # identify which strings have valid phone numbers
+print(str_subset(strings, phone)) # detect if elements of a string matches a regex
+print(str_count(strings, phone)) # count how many phone numbers have in each string
+print(str_locate(strings, phone)) # locate where phone number is located in string
+print(str_locate_all(strings, phone)) # locate all matches
+print(str_extract(strings, phone)) # extract phone numbers to first match
+print(str_extract_all(strings, phone)) # extract phone numbers for all matches
+print(str_extract_all(strings, phone, simplify = TRUE)) # extract phone numbers for all matches with simplified structure
+print(str_match(strings, phone)) # return column for matches and other columns for subsets of the match
+print(str_match_all(strings, phone)) # same as before, but extract all matches
+print(str_replace(strings, phone, "XXX-XXX-XXXX")) # replace the occurrences of the first string by the second string for first match
+print(str_replace_all(strings, phone, "XXX-XXX-XXXX")) # same as before but replaces all matches
+print(str_split("a-b-c", "-")) # split string into fixed number of pieces
+print(str_split_fixed("a-b-c", "-", n = 2)) # same as before, but to variable number of pieces
+```
+
+```{r}
+# since there are mutiples ways to describe a char...
+a1 <- "\u00e1"
+a2 <- "a\u0301"
+print(c(a1, a2)) # this shows the same char, but with different codification
+print(a1 == a2) # thus they are not equal
+print(str_detect(a1, fixed(a2)))
+print(str_detect(a1, coll(a2))) # using coll allow to compare as a human would do
+i <- c("I", "İ", "i", "ı")
+print(i)
+print(str_subset(i, coll("i", ignore_case = TRUE))) # fetch match using human-language collation rules
+print(str_subset(i, coll("i", ignore_case = TRUE, locale = "tr"))) # same as before for turkish language
+```
+
+```{r}
+x <- "This is a sentence."
+print(str_split(x, boundary("word"))) # fetch boundaries between words and split them
+print(str_count(x, boundary("word"))) # print how many words were separated
+print(str_extract_all(x, boundary("word"))) # extract all matches
+print(str_split(x, "")) # the boundary character can be alternated
+print(str_count(x, "")) # this results in the string beeing separated in every char
+```
+
+### Exercício 11
+> Faça novamente o exercício 8 da Parte 2, utilizando a biblioteca dplyr
+
+Já foi feito anteriormente.

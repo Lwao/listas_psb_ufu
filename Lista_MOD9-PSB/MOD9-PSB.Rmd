@@ -1,0 +1,21 @@
+
+---
+title: "Lista do Módulo 9"
+author: "Levy Gabriel da Silva Galvão"
+output: 
+  html_document:
+    highlight: tango
+    includes:
+      after_body: psbfix.html
+---
+
+# Módulo 9
+## Exercício 1
+> enunciado
+
+resposta
+
+```{r}
+# codigo
+```
+
