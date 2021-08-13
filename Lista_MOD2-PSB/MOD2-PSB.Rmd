@@ -11,13 +11,31 @@ output:
 
 # Módulo 2
 ## Exercício 1
-> enunciado
+> Gere sinais sintéticos que simulem a forma de onda do ciclo respiratório, de acordo a faixa etária:
 
-resposta
+- do nascimento a 6 semanas: 30 a 40 respirações por minuto;
+- 6 meses: 25 a 40 respirações por minuto;
+- 3 anos: 20 a 30 respirações por minuto;
+- 6 anos: 18 a 25 respirações por minuto;
+- 10 anos: 17 a 23 respirações por minuto;
+- Adultos: 12 a 18 respirações por minuto;
+- Idosos (≥ 65 anos): 12 a 28 respirações por minuto;
+- Idosos (≥ 80 anos): 10 a 30 respirações por minuto.
 
 ```{r}
-# codigo
+library(dygraphs)
+genBreathing <- function(size, sampling_time, verbose_age)
+{
+  t <- seq(from=0, to=size*sampling_time-1, by=sampling_time)
+  f <- 10
+  signal <- sin(2*pi*f*t)
+  dygraph(data.frame(time=t, signal), group = "G1") %>% dyRangeSelector(dateWindow = c(0,0.1))
+  return(signal)
+}
+genBreathing(10,0.1,1)
 ```
+
+Gerar modo de converter idades em semanas, meses e anos para atribuir a correta respiração
 
 ## Exercício 2
 ## Exercício 3
