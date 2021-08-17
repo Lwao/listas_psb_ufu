@@ -23,23 +23,141 @@ output:
 - Idosos (≥ 80 anos): 10 a 30 respirações por minuto.
 
 ```{r}
-library(dygraphs)
-genBreathing <- function(size, sampling_time, verbose_age)
+library(stringr)
+genBreathing <- function(duration, sampling_time, verbose_age)
 {
-  t <- seq(from=0, to=size*sampling_time-1, by=sampling_time)
-  f <- 10
+  weeks <- 0
+  months <- 0
+  years <- 0
+  
+  # separate verbose age into occurrences
+  splitted_age <- unlist(str_extract_all(verbose_age, pattern="\\b(\\w+=\\w+)\\b"))
+  for(itr in length(splitted_age))
+  {
+    # extract the name and number of each occurrence
+    all <- unlist(str_extract_all(splitted_age[itr], pattern="\\b(\\w+)\\b"))
+    word <- all[1]
+    number <- strtoi(all[2])
+    # age in days is irrelevant
+    if(word=='weeks'){weeks <- weeks+number}
+    if(word=='months'){months <- months+number}
+    if(word=='years'){years <- years+number}
+  }
+  while(weeks>=5) # 1 month = 5 weeks
+  {
+    weeks <- weeks-5
+    months <- months+1
+  }
+  while(months>=12) # 1 year = 12 months
+  {
+    months <- months-12
+    years <- years+1
+  }
+
+  # define frequency based in age (max of range given)
+  if((years==0 && months==1 && weeks<=1) || (years==0 && months==0 && weeks<=6)){freq <- 40} # cycles/min
+  else if(years==0 && months<=6) {freq <- (25+40)/2} # cycles/min
+  else if(years<=3) {freq <- 30} # cycles/min
+  else if(years<=6) {freq <- 25} # cycles/min
+  else if(years<=10) {freq <- 23} # cycles/min
+  else if(years<65) {freq <- 18} # cycles/min
+  else if(years<80) {freq <- 28} # cycles/min
+  else {freq <- 30} # Hz
+  
+  f <- freq/60 # convert freq to Hz
+  t <- seq(from=0, to=duration-sampling_time, by=sampling_time)
   signal <- sin(2*pi*f*t)
-  dygraph(data.frame(time=t, signal), group = "G1") %>% dyRangeSelector(dateWindow = c(0,0.1))
+  
   return(signal)
 }
-genBreathing(10,0.1,1)
 ```
 
-Gerar modo de converter idades em semanas, meses e anos para atribuir a correta respiração
+A função ```genBreathing``` gera um sinal do ciclo respiratório de acordo com a especificação anterior. Seus parâmetros são a duração do sinal em segundos e o tempo de amostragem. O terceiro parâmetro é uma string que identifica a idade de acordo com alguns exemplos abaixo:
+
+- Idade de 4 semanas implica em ```verbose_age = 'weeks=4'```;
+- Idade de 2 meses e 3 semanas implica em ```verbose_age = 'months=2, weeks=3'```
+- Idade de 42 anos implica em ```verbose_age = 'years=42'```
+
+Esse parâmetro é acumulativo, então qualquer sequência de idades composta por semanas, meses e anos podem ser inseridas (obs: 5 semanas são consideradas como 1 mês e 12 mês são considerados como 1 ano). Abaixo são inicializados alguns sinais para cada uma das categorias de idade especificadas.
+
+```{r}
+duration = 60 # 1 min
+sampling_time = 0.001 # 1 ms
+t <- seq(from=0, to=duration-sampling_time, by=sampling_time)
+array.cat <- vector("list", 8)
+array.title <- vector("list", 8)
+array.cat[[1]] <- genBreathing(duration, sampling_time, verbose_age='weeks=6')
+array.cat[[2]] <- genBreathing(duration, sampling_time, verbose_age='months=6')
+array.cat[[3]] <- genBreathing(duration, sampling_time, verbose_age='years=3')
+array.cat[[4]] <- genBreathing(duration, sampling_time, verbose_age='years=6')
+array.cat[[5]] <- genBreathing(duration, sampling_time, verbose_age='years=10')
+array.cat[[6]] <- genBreathing(duration, sampling_time, verbose_age='years=42')
+array.cat[[7]] <- genBreathing(duration, sampling_time, verbose_age='years=70')
+array.cat[[8]] <- genBreathing(duration, sampling_time, verbose_age='years=90')
+
+array.title[[1]] <- 'Ciclo respiratório: 6 semanas de idade'
+array.title[[2]] <- 'Ciclo respiratório: 6 meses de idade'
+array.title[[3]] <- 'Ciclo respiratório: 3 anos de idade'
+array.title[[4]] <- 'Ciclo respiratório: 6 anos de idade'
+array.title[[5]] <- 'Ciclo respiratório: 10 anos de idade'
+array.title[[6]] <- 'Ciclo respiratório: 42 anos de idade'
+array.title[[7]] <- 'Ciclo respiratório: 70 anos de idade'
+array.title[[8]] <- 'Ciclo respiratório: 90 anos de idade'
+```
 
 ## Exercício 2
+> Utilize a bliblioteca **dygraph** para plotar um gráfico para cada um dos sinais simulados na questão 1. Adicione legendas para os eixos x e y de cada gráfico.
+
+```{r}
+library(dygraphs)
+library(htmltools)
+timeWindow <- c(0,10) # 0 to 1s
+
+usingDygraph = function(i){
+  plotResult <- data.frame(time=t, array.cat[i]) %>% 
+    dygraph(group='breathing', xlab='Tempo (s)', ylab='Intensidade da respiração', main=array.title[i],
+            width=400, height=300) %>% 
+    dyRangeSelector(dateWindow=timeWindow)
+  htmltools::tags$div(plotResult, style = "padding:10px; width: 450px; display:inline-block;")
+}
+res <- lapply(1:8, usingDygraph)
+htmltools::tagList(res)
+
+```
+
+`
 ## Exercício 3
+> Utilize a função **ggplot** para plotar um gráfico para cada um dos sinais simulados na questão 1. Adicione legendas para os eixos x e y de cada gráfico.
+
+```{r}
+library(ggplot2) 
+
+usingGgplot = function(i){
+  plotResult <- ggplot(data=array.cat[i], aes(x='Tempo (s)', y='Intensidade da respiração')) + 
+    ggtitle(array.title[i]) + 
+    geom_line()
+  htmltools::tags$div(plotResult, style = "padding:10px; width: 450px; display:inline-block;")
+}
+res <- lapply(1:8, usingDygraph)
+htmltools::tagList(res)
+``
 ## Exercício 4
+
+```{r}
+
+``
 ## Exercício 5
+
+```{r}
+
+``
 ## Exercício 6
+
+```{r}
+
+``
 ## Exercício 7
+
+```{r}
+
+``
