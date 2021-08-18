@@ -10,6 +10,7 @@ output:
 ---
 
 # Módulo 2
+
 ## Exercício 1
 > Gere sinais sintéticos que simulem a forma de onda do ciclo respiratório, de acordo a faixa etária:
 
@@ -162,27 +163,131 @@ data.frame(time=t, array.cat[1]) %>%
   dyOptions(stemPlot=TRUE)
 ```
 
-timeWindow <- c(0,10) # 0 to 10s
-
-usingDyStemSeries = function(i){
-  plotResult <- data.frame(time=t, array.cat[i]) %>% 
-    dygraph(group='breathing', xlab='Tempo (s)', ylab='Intensidade da respiração', main=array.title[i]) %>% 
-    dyRangeSelector(dateWindow=timeWindow) %>%
-    dyOptions(stemPlot=TRUE)
-}
+O intervalo entre as amostras é uma decorrência direta da natureza discreta do sinal gerado. Essa separação é exatamente o tempo entre a tomada de cada amostra do sinal. Ao contrário desse caso, um sinal contínuo não haveria separação, mas este tipo não pode ser representado por um computador, pois necessitaria de infinitas amostras. A quantidade de amostras pode ser aumentada para um intervalo de tempo cada vez menor, o que ocasionaria na qualidade do sinal discreto se aproximando cada vez mais do sinal analógico, porém sempre com erros.
 
 ## Exercício 5
 > Explique a estrutura básica de um arquivo EDF []((https://www.edfplus.info/specs/edf.html).
 
-```{r}
+De um ponto de vista macroscópico, um arquivo EDF é formado por um **cabeçalho** e os **dados gravados**. Os dados dizem respeito a gravações digitalizadas ininterruptas e multicanal.  Os detalhes das duas estruturas principais do arquivo EDF serão explicadas abaixo.
 
-```
+- Cabeçalho:
+  - Especifica características técnicas dos sinais registrados;
+  - Tamanho variável;
+  - Primeiros 256 bytes identificam:
+    - Paciente;
+    - Versão do formato EDF usado;
+    - Identificação sobre gravação;
+    - Informação temporal da gravação;
+    - Número de registros;
+    - Número de sinais;
+  - Haverá um sub-cabeçalho de 256 bytes para cada sinal, contendo:
+    - Tipo do sinal;
+    - Calibração da amplitude;
+    - Número de amostras em cada registro (taxa de amostragem pode ser encontrada, uma vez que a duração é conhecida);
+  - O sub-cabeçalho explicita que pode haver diferente ganhos de amplitude e diferentes frequências de amostragem para cada sinal;
+  
+- Dados gravados:
+  - Contém registros poligráficos multicanais;
+  - Os registros são divididos em épocas consecutivas de mesma duração;
+  - Registro da duração do sinal;
+  
 ## Exercício 6
 > Repita todos os exercícios apresentados neste módulo. Os comandos utilizados devem ser inseridos como resposta a esta questão.
 
 ```{r}
+library(dygraphs)
+
+tf <- 60 
+dt <- 0.001
+
+t <- seq(from = 0, to = tf, by = dt ) 
+
+f1 <- 40
+y1 <- sin(2*pi*t*f1)
+
+f2 <- 23
+y2 <- sin(2*pi*t*f2)
+
+tWindow <- c(10, 11)
+data.frame(time=t, y1) %>% dygraph(group = "G1") %>% dyRangeSelector(dateWindow = tWindow)
+data.frame(time=t, y2) %>% dygraph(group = "G1") %>%dyRangeSelector(dateWindow = tWindow)
+
+tWindow <- c(10, 10.05) 
+data.frame(time=t, y2) %>% 
+  dygraph(group = "G1") %>% 
+  dyRangeSelector(dateWindow = tWindow) %>%
+  dyOptions(stemPlot=TRUE)
+```
+
+```{r}
+set.seed(123) 
+
+t <- seq(from = 0, to = 10, by = 0.001) 
+
+y1 <- 97 + sin(2*pi*60*t)+sin(2*pi*30*t)+rnorm(length(t), mean = 0.3, sd = 0.1) 
+y2 <- 97 + sin(2*pi*60*t+(pi/6))+sin(2*pi*30*t+(pi/6))+rnorm(length(t), mean = 0.5, sd = 0.1) 
+
+data.frame(t,y1,y2) %>% 
+  dygraph(xlab = "tempo (segundos)", ylab = "SpO2 (%)") %>%
+  dyRangeSelector() %>%
+  dyEvent("2.1","tempo fixo tk = 2.1", labelLoc = "bottom")
 
 ```
+
+```{r}
+library(openxlsx)
+library(ggplot2) 
+library(edfReader)
+
+# xlsx
+
+df1 <- read.xlsx("Dados/V16C1RCC92.xlsx", sheet = 1, skipEmptyRows = FALSE)
+
+qplot(`[Time]`,`[G1.X]`, data = df1) 
+qplot(`[Time]`, `[G1.X]`, data = df1, geom=c("point", "line"))
+p <- qplot(`[Time]`, `[G1.X]`, data = df1, geom=c("point", "line"))
+p <- p + labs(x = "tempo (s)", y="graus/s") 
+print(p)
+ggplot(data=df1, aes(x=`[Time]`, y=`[G1.X]`)) + geom_point()
+ggplot(data=df1, aes(x=`[Time]`, y=`[G1.X]`)) + geom_line()
+ggplot(data=df1, aes(x=`[Time]`, y=`[G1.X]`)) + geom_point() + geom_line()
+```
+
+```{r}
+# txt
+df2 <- read.table("Dados/V16C1RCC92.txt",header = TRUE, sep = "\t", dec = ".", skip = 1, quote="", comment.char="")
+
+df2.1 <- data.frame(time=df2$X.Time., df2$X.G1.X.) 
+
+dygraph(df2.1,main = "Velocidade angular (dps - degree per second)") %>% 
+  dyRangeSelector() %>%
+  dyAxis("x", label = "tempo(s)") %>%
+  dyAxis("y", label = "amplitude")
+```
+```{r}
+# csv
+df3 <- read.csv("Dados/V16C1RCC92.csv", header = TRUE, sep =  ";")
+df3.1 <- data.frame(time=df3[[1]], amp=df3$X.A1.X.) 
+
+dygraph(df3.1,main = "Acelerometria (g)") %>% dyRangeSelector() %>%
+  dyAxis("x", label = "tempo(s)")%>%
+   dyAxis("y", label = "amplitude")
+```
+
+```{r}
+# edf
+CHdr <- readEdfHeader("Dados/V16C1RCC92.edf")
+Signals <- readEdfSignals(CHdr) 
+
+tt = seq(from=0, to=1049, by=1) * 1/Signals$`Ch: 0-:G1.X`$sRate
+
+df4 <- data.frame(time= tt, amp=Signals$`Ch: 1-:G1.Y`$signal) 
+
+dygraph(df4,main = "Acelerometria - Eixo Y (g)") %>% dyRangeSelector() %>%
+  dyAxis("x", label = "tempo(s)")%>%
+   dyAxis("y", label = "amplitude")
+```
+
 ## Exercício 7
 
 > A base de dados disponível na plataforma Moodle foi coletada utilizando-se o dispositivo TREMSEN (Precise Tremor Sensing), que é um dispositivo para a coleta de dados inerciais (i.e., movimentos).
@@ -203,6 +308,75 @@ Considerando as informações dadas, você deve:
 - Abrir o arquivo coletado em edf no R e gerar um gráfico utilizando a função qplot. Incluir as legendas dos eixos x - tempo (s) e y - amplitude (g).
 - Incluir todos os resultados e códigos resultantes da execução desta sequência de passos na resposta desta questão.
 
+Os passos de conversão .txt para .xls e de .xls. para .csv foram feitos em softwares externos.
+
+Portanto, em seguida, no trecho abaixo os arquivos .xlsx são lidos para que os gráficos sejam gerados:
+```{r}
+library(openxlsx)
+library(ggplot2) 
+
+# loading
+df_add_xlsx <- read.xlsx("Dados/Aduccao.xlsx", skipEmptyRows = FALSE, startRow = 2)
+df_flx_xlsx <- read.xlsx("Dados/Flexao.xlsx", skipEmptyRows = FALSE, startRow = 2)
+df_rot_xlsx <- read.xlsx("Dados/Rotacao.xlsx", skipEmptyRows = FALSE, startRow = 2)
+
+# plots
+qplot(df_add_xlsx$`[Time]`, df_add_xlsx$`[A1.X]`, geom=c("line")) +
+      labs(x='Tempo (s)', y='Amplitude (g)', 
+           title='Acelerômetro 1 de aducção eixo-x')  
+qplot(df_flx_xlsx$`[Time]`, df_flx_xlsx$`[A1.Y]`, geom=c("line")) +
+      labs(x='Tempo (s)', y='Amplitude (g)', 
+           title='Acelerômetro 1 de flexão eixo-y')  
+qplot(df_rot_xlsx$`[Time]`, df_rot_xlsx$`[A1.Z]`, geom=c("line")) +
+      labs(x='Tempo (s)', y='Amplitude (g)', 
+           title='Acelerômetro 1 de rotação eixo-z')  
+```
+
+O passo seguinte é carregar os arquivos .csv:
+```{r}
+# loading
+df_add_csv <- read.csv("Dados/Aduccao.csv", skip=1, header = TRUE, sep =  ",", check.names = FALSE)
+df_flx_csv <- read.csv("Dados/Flexao.csv", skip=1, header = TRUE, sep =  ",", check.names = FALSE)
+df_rot_csv <- read.csv("Dados/Rotacao.csv", skip=1, header = TRUE, sep =  ",", check.names = FALSE)
+
+# plots
+qplot(df_add_csv$`[Time]`, df_add_csv$`[A2.X]`, geom=c("line")) +
+      labs(x='Tempo (s)', y='Amplitude (g)', 
+           title='Acelerômetro 2 de aducção eixo-x')  
+qplot(df_flx_csv$`[Time]`, df_flx_csv$`[A2.Y]`, geom=c("line")) +
+      labs(x='Tempo (s)', y='Amplitude (g)', 
+           title='Acelerômetro 2 de flexão eixo-y')  
+qplot(df_rot_csv$`[Time]`, df_rot_csv$`[A2.Z]`, geom=c("line")) +
+      labs(x='Tempo (s)', y='Amplitude (g)', 
+           title='Acelerômetro 2 de rotação eixo-z')  
+```
+
+
+Por fim, a última rodada de leituras e plots são utilizando os arquivos .edf lidos abaixo:
 ```{r}
 
+library(edfReader)
+
+# loading
+header <- readEdfHeader("Dados/Aduccao.edf")
+df_add_edf <- readEdfSignals(header) 
+header <- readEdfHeader("Dados/Flexao.edf") 
+df_flx_edf <- readEdfSignals(header)
+header <- readEdfHeader("Dados/Rotacao.edf")
+df_rot_edf <- readEdfSignals(header)
+
+t_add = seq(from=0, to=df_add_edf$`Ch: 17-:A2.Z`$sRate*df_add_edf$`Ch: 17-:A2.Z`$recordedPeriod-1, by=1) * 1/df_add_edf$`Ch: 17-:A2.Z`$sRate
+t_flx = seq(from=0, to=df_flx_edf$`Ch: 16-:A2.Y`$sRate*df_flx_edf$`Ch: 16-:A2.Y`$recordedPeriod-1, by=1) * 1/df_flx_edf$`Ch: 16-:A2.Y`$sRate
+t_rot = seq(from=0, to=df_rot_edf$`Ch: 15-:A2.X`$sRate*df_rot_edf$`Ch: 15-:A2.X`$recordedPeriod-1, by=1) * 1/df_rot_edf$`Ch: 15-:A2.X`$sRate
+
+# plot
+qplot(t_add, df_add_edf$`Ch: 17-:A2.Z`$signal, geom=c("line")) +
+      labs(x='Tempo (s)', y='Amplitude (g)', 
+           title='Acelerômetro 2 de aducção eixo-z, canal 17')  
+qplot(t_flx, df_flx_edf$`Ch: 16-:A2.Y`$signal, geom=c("line")) +
+      labs(x='Tempo (s)', y='Amplitude (g)', 
+           title='Acelerômetro 2 de flexão eixo-y, canal 16')  
+qplot(t_rot, df_rot_edf$`Ch: 15-:A2.X`$signal, geom=c("line")) +
+      labs(x='Tempo (s)', y='Amplitude (g)', 
+           title='Acelerômetro 2 de rotação eixo-x, canal 15') 
 ```
