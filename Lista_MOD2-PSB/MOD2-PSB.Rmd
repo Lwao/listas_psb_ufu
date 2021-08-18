@@ -111,7 +111,7 @@ array.title[[8]] <- 'Ciclo respiratório: 90 anos de idade'
 ```{r}
 library(dygraphs)
 library(htmltools)
-timeWindow <- c(0,10) # 0 to 1s
+timeWindow <- c(0,10) # 0 to 10s
 
 usingDygraph = function(i){
   plotResult <- data.frame(time=t, array.cat[i]) %>% 
@@ -125,39 +125,84 @@ htmltools::tagList(res)
 
 ```
 
-`
+
 ## Exercício 3
 > Utilize a função **ggplot** para plotar um gráfico para cada um dos sinais simulados na questão 1. Adicione legendas para os eixos x e y de cada gráfico.
 
 ```{r}
 library(ggplot2) 
-
+library(magrittr)
+library(multipanelfigure)
 usingGgplot = function(i){
-  plotResult <- ggplot(data=array.cat[i], aes(x='Tempo (s)', y='Intensidade da respiração')) + 
+  df <- data.frame(time=t, breath=array.cat[[i]])
+  plotResult <- ggplot(data=df, aes(x=time, y=breath)) + 
+    labs(x='Tempo (s)', y='Intensidade da respiração') +
     ggtitle(array.title[i]) + 
     geom_line()
-  htmltools::tags$div(plotResult, style = "padding:10px; width: 450px; display:inline-block;")
+  return(plotResult)
 }
-res <- lapply(1:8, usingDygraph)
-htmltools::tagList(res)
-``
+usingGgplot(1)
+usingGgplot(2)
+usingGgplot(3)
+usingGgplot(4)
+usingGgplot(5)
+usingGgplot(6)
+usingGgplot(7)
+usingGgplot(8)
+```
+
+
 ## Exercício 4
 
-```{r}
+> Escolha um sinal simulado na questão 1, e plote-o utilizando a função **dyStemSeries**. Por que há um intervalo temporal entre cada amostra?
 
-``
+```{r}
+data.frame(time=t, array.cat[1]) %>% 
+  dygraph(xlab='Tempo (s)', ylab='Intensidade da respiração', main=array.title[1]) %>% 
+  dyOptions(stemPlot=TRUE)
+```
+
+timeWindow <- c(0,10) # 0 to 10s
+
+usingDyStemSeries = function(i){
+  plotResult <- data.frame(time=t, array.cat[i]) %>% 
+    dygraph(group='breathing', xlab='Tempo (s)', ylab='Intensidade da respiração', main=array.title[i]) %>% 
+    dyRangeSelector(dateWindow=timeWindow) %>%
+    dyOptions(stemPlot=TRUE)
+}
+
 ## Exercício 5
+> Explique a estrutura básica de um arquivo EDF []((https://www.edfplus.info/specs/edf.html).
 
 ```{r}
 
-``
+```
 ## Exercício 6
+> Repita todos os exercícios apresentados neste módulo. Os comandos utilizados devem ser inseridos como resposta a esta questão.
 
 ```{r}
 
-``
+```
 ## Exercício 7
 
+> A base de dados disponível na plataforma Moodle foi coletada utilizando-se o dispositivo TREMSEN (Precise Tremor Sensing), que é um dispositivo para a coleta de dados inerciais (i.e., movimentos).
+
+A coleta de dados foi executada considerando os seguinte protocolo:
+
+- Um acelerômetro triaxial foi posicionado no dorso da mão, sobre o osso Capitato.
+- O eixo X do acelerômetro foi alinhado paralelamente à terceira falange distal.
+- Os dados foram coletados enquanto o participante realizava os seguintes movimentos: – 5 flexões do punho; – 5 extensões do punho; – 5 aduções do punho; – 5 abduções do punho.
+- Os dados coletados foram salvos no formato EDF e TXT, e nomeados de acordo com o tipo de movimento realizado (Adução, Flexão e Rotação).
+
+Considerando as informações dadas, você deve:
+
+- Abrir o arquivo TXT no Excel e salvar uma versão deste arquivo no formato xls.
+- Salvar o arquivo xls gerado no formato csv.
+- Abrir o arquivo coletado em xls no R e gerar um gráfico utilizando a função qplot. Incluir legendas dos eixos x - tempo (s) e y - amplitude (g).
+- Abrir o arquivo coletado em csv no R e gerar um gráfico utilizando a função qplot. Incluir as legendas dos eixos x - tempo (s) e y - amplitude (g).
+- Abrir o arquivo coletado em edf no R e gerar um gráfico utilizando a função qplot. Incluir as legendas dos eixos x - tempo (s) e y - amplitude (g).
+- Incluir todos os resultados e códigos resultantes da execução desta sequência de passos na resposta desta questão.
+
 ```{r}
 
-``
+```
