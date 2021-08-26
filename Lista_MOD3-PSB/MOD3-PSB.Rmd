@@ -10,12 +10,12 @@ output:
 ---
 
 # Módulo 3
-## Exercício 1
-> enunciado
+
+## Exercício 4
+> Gere um gráfico qualquer que represente um evento discreto ao longo do tempo.
 
 resposta
 
 ```{r}
 # codigo
 ```
-
