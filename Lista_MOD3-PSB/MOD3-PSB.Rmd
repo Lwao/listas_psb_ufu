@@ -11,48 +11,79 @@ output:
 
 # Módulo 3
 
-
-## Exercício 5
-> O erro de quantização pode ser simulado utilizando funções de arredondamento. Para saber mais sobre essas funções, digite na linha de comando do R o comando: help(“ceiling”). Faça um programa no R que execute os seguintes passos:
-
-- Carregue o arquivo de dados coletados (em sala de aula) com sensores inerciais;
-- Selecione uma variável e aplique sobre ela a função ceileing;
-- Gere um gráfico que mostre a forma de onda da variável selecionada (x1), do resultado da função ceiling (x2), e da diferença entre as duas variáveis (y = x1-x2).
-
-
-O sinal foi normalizado e escalonado para que o efeito do ceiling fique mais destacado, mostrando assim um envelope no entorno da onda.
+## Exercício 9
+> Dado o trecho de código abaixo:
 
 ```{r}
-# step 1
+library("reshape2")
+library(ggplot2)
+library(gganimate)
+library(dplyr)
 
-library(openxlsx)
-library(dygraphs)
 
-df <- read.xlsx("Dados/Dados1.xlsx", sheet = 1, skipEmptyRows = FALSE, rows = c(1:100)) # read data from .xlsx
+# Data generation ---------------------------------------------------------
 
-# step 2
+fs <- 100 # sampling frequency in Hz
+dt <- 1/fs # time resolution in seconds
+tf <- 5 # duração em segundos
+t <- seq(from = 0, to = tf, by =dt)# time vector in seconds
+f <- 1 # frequência de oscilação da senoide
+y <- sin(2*pi*f*t)
 
-used <- 10*df$EMG1/min(df$EMG1)
-cld <- ceiling(used)
-diffrnc <- used-cld
 
-# step 3
 
-data.frame(time=df$Time,x1=used,x2=cld,x1mx2=diffrnc) %>%
-  dygraph(xlab = "Time (s)", 
-          ylab = "Amplitude", 
-          main = "Comparison in use of ceiling", 
-          group = "ceiling")
+fs1 <- 30 # reduzindo a taxa de amostragem
+dt1 <- 1/fs1 # resolução temporal em segundos
+t1 <- seq(from = 0, to = tf, by =dt1)# time vector in seconds
+
+y2 <- sin(2*pi*f*t1) 
+
+# unindo vetores de tempo (repetições são excluídas, de forma que apenas um valor é mantido)
+# e ordenando o vetor de tempo resultante
+tt <- union(t, t1)
+tt <- sort(tt) 
+
+v1 <- rep(NA, length(tt))
+v2 <- rep(NA, length(tt))
+
+v1[ (tt %in% t) == TRUE ] <- y
+v2[ (tt %in% t1) == TRUE ] <- y2
+
+dfplot <- data.frame(t = tt, v1, v2)
+
+dfplotm <- melt(dfplot, id="t")  #(para plotar séries multiplas de forma mais simples)
+
+
+# Gráfico estático --------------------------------------------------------
+
+
+theme_set(theme_bw()) #set the default ggplot2 theme to theme_bw()
+
+p <- ggplot(dfplotm,
+            aes(x=t, y=value, colour = variable)) +
+  geom_line(data=dfplotm[!is.na(dfplotm$value),]) +
+  geom_point(data=dfplotm[!is.na(dfplotm$value),],
+             aes(shape=variable, size = variable, alpha = variable)) +
+  scale_size_manual(values=c(3.2,2.8)) +
+  scale_alpha_manual(values = c(0.5,1)) + 
+  scale_shape_manual(values = c(1, 16))
+print(p)
 ```
 
-## Exercício 5
-> O erro de quantização pode ser simulado utilizando funções de arredondamento. Para saber mais sobre essas funções, digite na linha de comando do R o comando: help(“ceiling”). Faça um programa no R que execute os seguintes passos:
+Considere:
 
-- Carregue o arquivo de dados coletados (em sala de aula) com sensores inerciais;
-- Selecione uma variável e aplique sobre ela a função ceileing;
-- Gere um gráfico que mostre a forma de onda da variável selecionada (x1), do resultado da função ceiling (x2), e da diferença entre as duas variáveis (y = x1-x2).
-
-resposta
+- Estude e explique cada uma das linhas de código.
+- Qual conceito está ilustrado na animação?
+- Qual cor de linha representa um sinal contínuo?
+- Qual símbolo representa um sinal discreto?
+- Qual a resolução temporal dos sinais v1 e v2?
+- Qual sinal, v1 ou v2, possui a maior frequência de oscilação?
+- Qual a implicação prática do sinal v1 ter sido amostrado a uma taxa de frequência maior do que a do sinal v2?
+- Os sinais foram amostrados de acordo com a frequência de Nyquist?
+- As amostras dos sinais v1 e v2 acontecem em um mesmo tempo discreto? Justifique.
+- Qual o valor de pico a pico dos sinais v1 e v2?
+- Qual o valor do pico e do vale dos sinais v1 e v2?
+- Como poderíamos estimar um amostra em um tempo discreto inicialmente não existente no sinal v2?
 
 ```{r}
 # codigo
