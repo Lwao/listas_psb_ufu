@@ -618,87 +618,123 @@ data.frame(time=df$Time,x1=used,x2=cld,x1mx2=diffrnc) %>%
 ## Exercício 6
 > Implemente no R o exemplo que ilustra o conceito de “aliasing” abordado no vídeo “Aliasing: an introduction”.
 
-resposta
+Será gerada uma senoide a uma baixa taxa e em seguida esta será amostrada a uma taxa menor, resultando em uma senoide de diferente frequência da senoide original e no caso abaixo nem se assemelhando a uma senoide.
 
 ```{r}
-# codigo
+library(dygraphs)
+t_end <- 1
+dt <- 1/1000
+t <- seq(0, 1, by=dt)
+t_al <- seq(0, 1, by=dt*123)
+x <- sin(2*pi*5*t)
+y <- NA
+y[t %in% t_al] <- x[t %in% t_al]
+df <- data.frame(t=t, noAliasing=x, Aliasing=y) 
+dygraph(df, main = "Aliasing") %>% dyOptions(connectSeparatedPoints=TRUE, pointSize = 1)
 ```
 
 ## Exercício 7
 > Exemplifique por meio de um programa no R como podemos realizar a reamostragem de sinais por meio da interpolação.
 
-resposta
-
+A reamostragem por interpolação visa inserir amostras no sinal de interesse e interpolar os pontos das amostras existentes passando pelos novos pontos, para que estes possuam um valor que mantenha a continuidade da função. Vide exemplo a abaixo:
 ```{r}
-# codigo
-```
+library(dygraphs)
+t_end <- 1
+dt_high <- 0.1
+dt_low <- 0.01
+t <- seq(0, t_end, by=dt_high)
+t_aim <- seq(0, t_end, by=dt_low)
+data <- sin(2*pi*t)
+df <- data.frame(t, data)
 
+df_inter <- data.frame(spline(x=t, y=data, xout=t_aim))
+
+new_data <- df_inter$y
+new_t <- df_inter$x
+tt <- union(t, new_t)
+tt <- sort(tt)
+
+df <- data.frame(time=tt)
+df$y1 <- NA
+df$y2 <- NA
+
+df$y1[tt %in% t]<- data
+df$y2[tt %in% new_t]<- new_data
+
+dygraph(df, main = "Interpolação") %>%
+  dyRangeSelector() %>%
+  dyOptions(drawPoints = TRUE,connectSeparatedPoints=TRUE, pointSize = 2)
+
+```
+A partir do gráfico observa-se uma fina interpolação que permite que a senoide possua mais detalhes.
 ## Exercício 8
 > Qual a finalidade da função “union” utilizada em alguns exemplos deste tutorial? Exemplifique o uso da mesma.
 
-resposta
+A função **union** realiza a concatenação/união de arrays, considerando que cada um foi gerado individualmente e que o processamento final exige que eles estejam juntos. Vide um exemplo simples abaixo:
 
 ```{r}
-# codigo
+a <- c(1,2,3)
+b <- c(4,5,6)
+dplyr::union(a,b)
 ```
+Realizando a união de *a* e *b*.
 
 ## Exercício 9
 > Dado o trecho de código abaixo:
 
-```
+```{r}
 library("reshape2")
 library(ggplot2)
 library(gganimate)
 library(dplyr)
 
 
-# Data generation ---------------------------------------------------------
+# Geracao dos dados ---------------------------------------------------------
 
-fs <- 100 # sampling frequency in Hz
-dt <- 1/fs # time resolution in seconds
-tf <- 5 # duração em segundos
-t <- seq(from = 0, to = tf, by =dt)# time vector in seconds
-f <- 1 # frequência de oscilação da senoide
-y <- sin(2*pi*f*t)
+# sinal original
+fs <- 100 # frequencia de amostragem em Hz
+dt <- 1/fs # resolucao temporal em segundos
+tf <- 5 # duracso em segundos
+t <- seq(from = 0, to = tf, by =dt)# vetor temporal em segundos
+f <- 1 # frequencia de oscilacao da senoide
+y <- sin(2*pi*f*t) # senoide gerada
 
-
-
+# parametros para subamostragem
 fs1 <- 30 # reduzindo a taxa de amostragem
 dt1 <- 1/fs1 # resolução temporal em segundos
-t1 <- seq(from = 0, to = tf, by =dt1)# time vector in seconds
-
-y2 <- sin(2*pi*f*t1) 
+t1 <- seq(from = 0, to = tf, by =dt1)#  vetor temporal em segundos
+y2 <- sin(2*pi*f*t1) # senoide gerada
 
 # unindo vetores de tempo (repetições são excluídas, de forma que apenas um valor é mantido)
 # e ordenando o vetor de tempo resultante
-tt <- union(t, t1)
-tt <- sort(tt) 
+tt <- union(t, t1) # left join dos vetores de tempo
+tt <- sort(tt)# ordenacao do vetor tempo
 
-v1 <- rep(NA, length(tt))
-v2 <- rep(NA, length(tt))
+v1 <- rep(NA, length(tt)) # criar vetor de tamanho apropriado com valores NAN
+v2 <- rep(NA, length(tt)) # criar vetor de tamanho apropriado com valores NAN
 
-v1[ (tt %in% t) == TRUE ] <- y
-v2[ (tt %in% t1) == TRUE ] <- y2
+v1[ (tt %in% t) == TRUE ] <- y # preenchendo sinal original em instantes adequados ao vetor tempo original
+v2[ (tt %in% t1) == TRUE ] <- y2 # preenchendo sinal subamostrado em instantes adequados ao vetor tempo subamostrado
 
-dfplot <- data.frame(t = tt, v1, v2)
+dfplot <- data.frame(t = tt, v1, v2) # criacao de data frame com os dados gerados
 
 dfplotm <- melt(dfplot, id="t")  #(para plotar séries multiplas de forma mais simples)
 
 
-# Gráfico estático --------------------------------------------------------
+# Grafico estatico --------------------------------------------------------
 
+# criacao de gráfico estatico com o ggplot2 para apresentacao dos resultados
+theme_set(theme_bw()) # tema do ggplot2 para theme_bw()
 
-theme_set(theme_bw()) #set the default ggplot2 theme to theme_bw()
-
-p <- ggplot(dfplotm,
-            aes(x=t, y=value, colour = variable)) +
-  geom_line(data=dfplotm[!is.na(dfplotm$value),]) +
-  geom_point(data=dfplotm[!is.na(dfplotm$value),],
-             aes(shape=variable, size = variable, alpha = variable)) +
-  scale_size_manual(values=c(3.2,2.8)) +
-  scale_alpha_manual(values = c(0.5,1)) + 
-  scale_shape_manual(values = c(1, 16))
-print(p)
+p <- ggplot(dfplotm, # utiliza o data frame gerado anterioremente
+            aes(x=t, y=value, colour = variable)) + # configura series temporais a serem usadas
+  geom_line(data=dfplotm[!is.na(dfplotm$value),]) + # plot com linha geometricas quando valores diferentes de NAN
+  geom_point(data=dfplotm[!is.na(dfplotm$value),], # plot com pontos quando valores diferentes de NAN
+             aes(shape=variable, size = variable, alpha = variable)) + # configuracoes de estilo para o plot gerado
+  scale_size_manual(values=c(3.2,2.8)) + # definir tamanho da janela de plot
+  scale_alpha_manual(values = c(0.5,1)) + # definir transparencia do plot
+  scale_shape_manual(values = c(1, 16)) # definir formato do plot
+print(p) # plottar
 ```
 
 Considere:
@@ -716,6 +752,15 @@ Considere:
 - Qual o valor do pico e do vale dos sinais v1 e v2?
 - Como poderíamos estimar um amostra em um tempo discreto inicialmente não existente no sinal v2?
 
-```{r}
-# codigo
-```
+Resposta:
+
+- O conceito mostrado na animação é o de subamostragem;
+- A cor de linha verde representa o sinal contínuo (v1) e a cor azul representa o sinal amostrado, portanto discreto e com subamostragem (v2);
+- A resolução temporal do sinal contínuo é de 1/100 s e o do sinal amostrado é de 1/30 s; 
+- Ambos os sinais possuem a mesma frequência de oscilação;
+- Um sinal com frequência maior de amsotragem possui melhor qualidade de representação do sinal real, porém ocupa mais espaço para armazenamento;
+- Os sinais foram amostrados de acordo com o teorema da amostragem de Nyquist, pois estes não indicam sinal de Aliasing;
+- Uma vez que os sinais v1 e v2 estão armazenados em hardware, suas amotras ocorrem em tempo discreto, porém como v1 possui uma taxa de amostragem maior que v2, o intervalo que suas amostras acontecem é menor;
+- O valor pico-a-pico dos sinais v1 e v2 é 2;
+- O pico/vale dos sinais v1 e v2 é 1/-1;
+- A interpolação pode ser usada para estimar uma amostra inexistente do sinal v2.

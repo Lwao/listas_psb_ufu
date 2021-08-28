@@ -21,53 +21,52 @@ library(gganimate)
 library(dplyr)
 
 
-# Data generation ---------------------------------------------------------
+# Geracao dos dados ---------------------------------------------------------
 
-fs <- 100 # sampling frequency in Hz
-dt <- 1/fs # time resolution in seconds
-tf <- 5 # duração em segundos
-t <- seq(from = 0, to = tf, by =dt)# time vector in seconds
-f <- 1 # frequência de oscilação da senoide
-y <- sin(2*pi*f*t)
+# sinal original
+fs <- 100 # frequencia de amostragem em Hz
+dt <- 1/fs # resolucao temporal em segundos
+tf <- 5 # duracso em segundos
+t <- seq(from = 0, to = tf, by =dt)# vetor temporal em segundos
+f <- 1 # frequencia de oscilacao da senoide
+y <- sin(2*pi*f*t) # senoide gerada
 
-
-
+# parametros para subamostragem
 fs1 <- 30 # reduzindo a taxa de amostragem
 dt1 <- 1/fs1 # resolução temporal em segundos
-t1 <- seq(from = 0, to = tf, by =dt1)# time vector in seconds
-
-y2 <- sin(2*pi*f*t1) 
+t1 <- seq(from = 0, to = tf, by =dt1)#  vetor temporal em segundos
+y2 <- sin(2*pi*f*t1) # senoide gerada
 
 # unindo vetores de tempo (repetições são excluídas, de forma que apenas um valor é mantido)
 # e ordenando o vetor de tempo resultante
-tt <- union(t, t1)
-tt <- sort(tt) 
+tt <- union(t, t1) # left join dos vetores de tempo
+tt <- sort(tt)# ordenacao do vetor tempo
 
-v1 <- rep(NA, length(tt))
-v2 <- rep(NA, length(tt))
+v1 <- rep(NA, length(tt)) # criar vetor de tamanho apropriado com valores NAN
+v2 <- rep(NA, length(tt)) # criar vetor de tamanho apropriado com valores NAN
 
-v1[ (tt %in% t) == TRUE ] <- y
-v2[ (tt %in% t1) == TRUE ] <- y2
+v1[ (tt %in% t) == TRUE ] <- y # preenchendo sinal original em instantes adequados ao vetor tempo original
+v2[ (tt %in% t1) == TRUE ] <- y2 # preenchendo sinal subamostrado em instantes adequados ao vetor tempo subamostrado
 
-dfplot <- data.frame(t = tt, v1, v2)
+dfplot <- data.frame(t = tt, v1, v2) # criacao de data frame com os dados gerados
 
 dfplotm <- melt(dfplot, id="t")  #(para plotar séries multiplas de forma mais simples)
 
 
-# Gráfico estático --------------------------------------------------------
+# Grafico estatico --------------------------------------------------------
 
+# criacao de gráfico estatico com o ggplot2 para apresentacao dos resultados
+theme_set(theme_bw()) # tema do ggplot2 para theme_bw()
 
-theme_set(theme_bw()) #set the default ggplot2 theme to theme_bw()
-
-p <- ggplot(dfplotm,
-            aes(x=t, y=value, colour = variable)) +
-  geom_line(data=dfplotm[!is.na(dfplotm$value),]) +
-  geom_point(data=dfplotm[!is.na(dfplotm$value),],
-             aes(shape=variable, size = variable, alpha = variable)) +
-  scale_size_manual(values=c(3.2,2.8)) +
-  scale_alpha_manual(values = c(0.5,1)) + 
-  scale_shape_manual(values = c(1, 16))
-print(p)
+p <- ggplot(dfplotm, # utiliza o data frame gerado anterioremente
+            aes(x=t, y=value, colour = variable)) + # configura series temporais a serem usadas
+  geom_line(data=dfplotm[!is.na(dfplotm$value),]) + # plot com linha geometricas quando valores diferentes de NAN
+  geom_point(data=dfplotm[!is.na(dfplotm$value),], # plot com pontos quando valores diferentes de NAN
+             aes(shape=variable, size = variable, alpha = variable)) + # configuracoes de estilo para o plot gerado
+  scale_size_manual(values=c(3.2,2.8)) + # definir tamanho da janela de plot
+  scale_alpha_manual(values = c(0.5,1)) + # definir transparencia do plot
+  scale_shape_manual(values = c(1, 16)) # definir formato do plot
+print(p) # plottar
 ```
 
 Considere:
