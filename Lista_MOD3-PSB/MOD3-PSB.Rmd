@@ -11,8 +11,46 @@ output:
 
 # Módulo 3
 
-## Exercício 4
-> Gere um gráfico qualquer que represente um evento discreto ao longo do tempo.
+
+## Exercício 5
+> O erro de quantização pode ser simulado utilizando funções de arredondamento. Para saber mais sobre essas funções, digite na linha de comando do R o comando: help(“ceiling”). Faça um programa no R que execute os seguintes passos:
+
+- Carregue o arquivo de dados coletados (em sala de aula) com sensores inerciais;
+- Selecione uma variável e aplique sobre ela a função ceileing;
+- Gere um gráfico que mostre a forma de onda da variável selecionada (x1), do resultado da função ceiling (x2), e da diferença entre as duas variáveis (y = x1-x2).
+
+
+O sinal foi normalizado e escalonado para que o efeito do ceiling fique mais destacado, mostrando assim um envelope no entorno da onda.
+
+```{r}
+# step 1
+
+library(openxlsx)
+library(dygraphs)
+
+df <- read.xlsx("Dados/Dados1.xlsx", sheet = 1, skipEmptyRows = FALSE, rows = c(1:100)) # read data from .xlsx
+
+# step 2
+
+used <- 10*df$EMG1/min(df$EMG1)
+cld <- ceiling(used)
+diffrnc <- used-cld
+
+# step 3
+
+data.frame(time=df$Time,x1=used,x2=cld,x1mx2=diffrnc) %>%
+  dygraph(xlab = "Time (s)", 
+          ylab = "Amplitude", 
+          main = "Comparison in use of ceiling", 
+          group = "ceiling")
+```
+
+## Exercício 5
+> O erro de quantização pode ser simulado utilizando funções de arredondamento. Para saber mais sobre essas funções, digite na linha de comando do R o comando: help(“ceiling”). Faça um programa no R que execute os seguintes passos:
+
+- Carregue o arquivo de dados coletados (em sala de aula) com sensores inerciais;
+- Selecione uma variável e aplique sobre ela a função ceileing;
+- Gere um gráfico que mostre a forma de onda da variável selecionada (x1), do resultado da função ceiling (x2), e da diferença entre as duas variáveis (y = x1-x2).
 
 resposta
 

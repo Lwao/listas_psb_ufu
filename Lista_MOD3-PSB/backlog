@@ -525,11 +525,62 @@ dygraph(df, group="EMG11")%>%
 ## Exercício 4
 > Gere um gráfico qualquer que represente um evento discreto ao longo do tempo.
 
-resposta
+Os eventos discretos ocorrerão em tempos discretos. O material de aula ilustra-os como picos em um sinal acima de um limiar de detecção, mas estes também podem ser ilustrados por descontinuidades na frequência de um sinal.
+
+Inicialmente constrói um sinal para representar o ruído:
 
 ```{r}
-# codigo
+library(dygraphs)
+
+t_end = 1
+dt = 1e-5
+t <- seq(from = 0, to = t_end, by = dt)
+
+set.seed(42)
+samples <- length(t)
+snr <- 15
+noise <- rnorm(n=samples, mean=0, sd=sqrt(10^(-snr/10)))
+
+data.frame(time=t,noise=noise) %>%
+  dygraph(xlab = "Time (s)", 
+          ylab = "Amplitude", 
+          main = "Gaussian noise", 
+          group = "noise")
+
 ```
+
+Em seguida será feito um trem de pulsos que será responsável por modular a frequência do sinal.
+
+```{r}
+
+freq <- 2
+squareWave <- 10+10*((t%%(1/freq) < 1/(2*freq)))
+
+data.frame(time=t,wave=squareWave) %>%
+  dygraph(xlab = "Time (s)", 
+          ylab = "Amplitude", 
+          main = "Square wave", 
+          group = "wave") %>%
+  dySeries(stemPlot=TRUE)
+```
+
+Portanto, para testar os efeitos, será construído um sinal senoidal, mas que não possuirá frequência constante, mas sim uma frequência modulada pela forma de onda anterior.
+
+```{r}
+
+sineWave <- sin(2*pi*squareWave*t)
+peaks <- c(0,diff(squareWave)/10)
+peaks[peaks==0] = NA
+
+data.frame(time=t,wave=sineWave, peaks=peaks) %>%
+  dygraph(xlab = "Time (s)", 
+          ylab = "Amplitude", 
+          main = "Modulated sine wave", 
+          group = "final") %>%
+  dySeries("peaks",stemPlot=TRUE)
+```
+
+Da forma de onda senoidal observa-se os eventos discretos da mudança de frequência. Estes podem ser monitorados por um rastreador de fase. Mas para termos de ilustração, foi utilizada a própria onda quadrada para indicar o aumento ou redução na frequência, sendo estes os indicadores dos eventos discretos.
 
 ## Exercício 5
 > O erro de quantização pode ser simulado utilizando funções de arredondamento. Para saber mais sobre essas funções, digite na linha de comando do R o comando: help(“ceiling”). Faça um programa no R que execute os seguintes passos:
@@ -538,10 +589,30 @@ resposta
 - Selecione uma variável e aplique sobre ela a função ceileing;
 - Gere um gráfico que mostre a forma de onda da variável selecionada (x1), do resultado da função ceiling (x2), e da diferença entre as duas variáveis (y = x1-x2).
 
-resposta
+
+O sinal foi normalizado e escalonado para que o efeito do ceiling fique mais destacado, mostrando assim um envelope no entorno da onda.
 
 ```{r}
-# codigo
+# step 1
+
+library(openxlsx)
+library(dygraphs)
+
+df <- read.xlsx("Dados/Dados1.xlsx", sheet = 1, skipEmptyRows = FALSE, rows = c(1:100)) # read data from .xlsx
+
+# step 2
+
+used <- 10*df$EMG1/min(df$EMG1)
+cld <- ceiling(used)
+diffrnc <- used-cld
+
+# step 3
+
+data.frame(time=df$Time,x1=used,x2=cld,x1mx2=diffrnc) %>%
+  dygraph(xlab = "Time (s)", 
+          ylab = "Amplitude", 
+          main = "Comparison in use of ceiling", 
+          group = "ceiling")
 ```
 
 ## Exercício 6
