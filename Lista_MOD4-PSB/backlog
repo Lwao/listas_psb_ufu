@@ -1,0 +1,110 @@
+
+---
+title: "Lista do Módulo 4"
+author: "Levy Gabriel da Silva Galvão"
+output: 
+  html_document:
+    highlight: tango
+    includes:
+      after_body: psbfix.html
+---
+
+# Módulo 4
+## Exercício 1
+> Faça uma coleta simultânea de dados eletromiográficos e inerciais. Você deverá seguir o seguinte protocolo experimental:
+
+- Posicionar os sensores de eletromiografia no músculo tibial anterior e nos músculos do tríceps sural. O acelerômetro deve ser posicionado nos dois terços proximais da parte lateral da perna, com o eixo y contra a gravidade.
+- Com o sujeito na posição ortostática deve-se realizar o movimento de dorsiflexão e flexão plantar. No retorno da flexão realizar um contato brusco do calcanhar com o solo.
+- Realizar 60 repetições da tarefa, sem descanso.
+- Salvar o arquivo de dados resultante com o nome “DadosM4-1.txt”.
+
+Resposta: como os dados já estão coletados, resta realizar o processamento.
+
+## Exercício 2
+> Faça a estimativa de parâmetros estatísticos dos sinais eletromiográficos disponíveis no arquivo “DadosM4-1.txt”. Os seguintes passos devem ser executados:
+
+- Faça a detecção dos picos no sinal AccY. Devem ser considerados picos aqueles valores que tenham amplitude de pelo menos 90% do valor do pico máximo do sinal.
+- Gere um gráfico com os picos encontrados na letra a).
+- Calcule as estatísticas abaixo para cada janela de sinal do músculo tibial anterior. O tamanho da janela deve ser de 500 ms, e o início da mesma deve ser a partir de cada um dos picos detectados na letra a). Média, Mediana, Moda, Amplitude, Variância, Coeficiente de Variação, Distância Interquartil
+- Faça um gráfico que descreva a variação da Mediana em função do tempo (dica: observe como o valor rms foi calculado em função do tempo, no tutorial)
+
+```{r}
+# step 1 - read data in .txt
+
+library(openxlsx)
+df <- read.table("Dados/DadosM4-1.txt", header = FALSE, sep = " ", dec = ".", skip = 6)
+colnames(df) <- c('ch1','ch2','ch3','ch4')
+splRate <- 500
+df$Time <- seq(0, nrow(df)/splRate-1/splRate, by=1/splRate)
+```
+
+```{r}
+# step 2 - track peaks
+
+library(pracma)
+threshold = 0.9 # 90% of max
+# apply threshold as 90% of max value of each column
+th1 <- max(df$ch1, na.rm = TRUE)*threshold 
+th2 <- max(df$ch2, na.rm = TRUE)*threshold 
+th3 <- max(df$ch3, na.rm = TRUE)*threshold 
+th4 <- max(df$ch4, na.rm = TRUE)*threshold
+# find peaks in all dataframe based in the threshold
+pp1 <- findpeaks(df$ch1, minpeakheight=th1)
+pp2 <- findpeaks(df$ch2, minpeakheight=th2)
+pp3 <- findpeaks(df$ch3, minpeakheight=th3)
+pp4 <- findpeaks(df$ch4, minpeakheight=th4)
+# return indexes for peaks
+idxpk1 <- pp1[ , 2]
+idxpk2 <- pp2[ , 2]
+idxpk3 <- pp3[ , 2]
+idxpk4 <- pp4[ , 2]
+```
+
+```{r}
+# step 3 - plot peaks in time series
+
+# initialize columns to store peak value
+df$ch1_pks <- NA # peaks for ch1
+df$ch2_pks <- NA # peaks for ch2
+df$ch3_pks <- NA # peaks for ch3
+df$ch4_pks <- NA # peaks for ch4
+# atributte peak value to each channel
+df$ch1_pks[idxpk1] <- df$ch1[idxpk1]
+df$ch2_pks[idxpk2] <- df$ch2[idxpk2]
+df$ch3_pks[idxpk3] <- df$ch3[idxpk3]
+df$ch4_pks[idxpk4] <- df$ch4[idxpk4]
+
+library(dygraphs)
+df[c("Time","ch1", "ch1_pks")] %>%
+  dygraph(group="ch1", main="Channel1") %>%
+  dySeries("ch1_pks",stemPlot=TRUE) %>%
+  dyAxis("y", valueRange = c(min(df$ch1)*0.9, max(df$ch1)*1.1)) %>% 
+  dyLimit(th1, "Max", strokePattern = "solid", color = "blue") %>%
+  dyRangeSelector(c(30,40))
+
+df[c("Time","ch2", "ch2_pks")] %>%
+  dygraph(group="ch2", main="Channel2") %>%
+  dySeries("ch2_pks",stemPlot=TRUE) %>%
+  dyAxis("y", valueRange = c(min(df$ch2)*0.9, max(df$ch2)*1.1)) %>% 
+  dyLimit(th2, "Max", strokePattern = "solid", color = "blue") %>%
+  dyRangeSelector(c(30,40))
+
+df[c("Time","ch3", "ch3_pks")] %>%
+  dygraph(group="ch3", main="Channel3") %>%
+  dySeries("ch3_pks",stemPlot=TRUE) %>%
+  dyAxis("y", valueRange = c(min(df$ch3)*0.9, max(df$ch3)*1.1)) %>% 
+  dyLimit(th3, "Max", strokePattern = "solid", color = "blue") %>%
+  dyRangeSelector(c(30,40))
+
+df[c("Time","ch4", "ch4_pks")] %>%
+  dygraph(group="ch4", main="Channel4") %>%
+  dySeries("ch4_pks",stemPlot=TRUE) %>%
+  dyAxis("y", valueRange = c(min(df$ch4)*0.9, max(df$ch4)*1.1)) %>% 
+  dyLimit(th4, "Max", strokePattern = "solid", color = "blue") %>%
+  dyRangeSelector(c(30,40))
+```
+
+```{r}
+# step 4 - generate statistics
+```
+
