@@ -1,7 +1,20 @@
+
+---
+title: "Lista do Módulo 3"
+author: "Levy Gabriel da Silva Galvão"
+output: 
+  html_document:
+    highlight: tango
+    includes:
+      after_body: psbfix.html
+---
+
+# Módulo 3
+
 ## Exercício 1
 > Repita e explique a finalidade de cada um dos exemplos realizados neste tutorial.
 
-- Exemplo 1:
+### Exemplo 1:
 
 Este exemplo mostra como simular um sinal analógico no R, permitindo gerar um vetor temporal com período de amsotragem e duração escolhidas. O vetor de tempo é usado para gerar um cosseno que é plotado pelo dygraph e de forma que lembra um sinal analógico.
 
@@ -23,7 +36,7 @@ data.frame(t,y) %>%
   dyRangeSelector(dateWindow = c((517-1)*dt, (600-1)*dt))
 ```
 
-- Exemplo 2:
+### Exemplo 2:
 
 O segundo exemplo se vale do sinal criado anteriormente, porém com uma abordagem diferente na plotagem que, por meio de um stem plot acentua as amostras discretas do vetor criado, demonstrando que na verdade aquele vetor se tratar de um sinal discreto.
 
@@ -37,7 +50,7 @@ data.frame(t,y) %>%
   dySeries(stemPlot=TRUE)
 ```
 
-- Exemplo 3:
+### Exemplo 3:
 
 Este exemplo trata da leitura e extração de características de um arquivos .xlsx. São lidos os sinais e a característica de resolução temporal é extraída para que os plots sejam realizados.
 
@@ -53,9 +66,10 @@ data.frame(time=df1$Time, y1 = df1$EMG1, y2=df1$EMG1) %>%
   dyRangeSelector() %>%
   dySeries("y1",stemPlot=TRUE)
 ```
-- Exemplo 4:
 
+### Exemplo 4:
 
+Este exemplo ilustra a ocorrência de eventos discretos por meio do valor de pico em sinais de EMG.
 
 ```{r}
 library(pracma) #package para usar a função findpeaks
@@ -98,7 +112,9 @@ dy_graph <- list(d1,d2)
 # render the dygraphs objects using htmltools
 htmltools::browsable(htmltools::tagList(dy_graph))
 ```
-- Exemplo 5:
+### Exemplo 5:
+
+Este exemplo ilustra a amostragem de sinais, mas iniciando com a definição de um tevotr tempo e a frequência de amostragem.
 
 ```{r}
 fs <- 500 #frequência de amostragem em Hz
@@ -112,7 +128,9 @@ length(t) # número de amostras, N, do vetor de tempo discreto
 min(t) # tempo mínimo (s)
 max(t) # tempo máximo (s)
 ```
-- Exemplo 6:
+### Exemplo 6:
+
+Com a definição do vetor tempo do exemplo anterior, sinais de experimentos podem ser coletados.
 
 ```{r}
  # install.packages("tuneR")   
@@ -137,7 +155,9 @@ dy_graph <- list(d1,d2,d3, d4)
 # render the dygraphs objects using htmltools
 htmltools::browsable(htmltools::tagList(dy_graph))
 ```
-- Exemplo 7:
+### Exemplo 7:
+
+Esse exemplo trata da quantização, mostrando níveis discretos que o sinal de interesse quantizado pode assumir e, diferente da sua contraparte analógica, este assume níveis discretos e limitados.
 
 ```{r}
 #unloadNamespace("tuneR")
@@ -173,7 +193,15 @@ yq <- qts[findInterval(y, qts)]
 
 dygraph(data.frame(t, y, yq), xlab = "tempo (segundos)", ylab = "amplitude", main = "Sinal Quantizado")%>%dyRangeSelector(c((517-1)*dt, (600-1)*dt))
 ```
-- Exemplo 8:
+### Exemplo 8:
+
+Este exemplo ilustra o efeito do Alisiang.
+
+- Inicialmente o sinal é criado;
+- Em seguida ele é replicado com uma taxa de amostragem maior (evitando completamente o Aliasing);
+- Porém logo em seguida a taxa de amostragem é reduzida e este sofre do efeito de Aliasing, pois as amostras existentes não são representativas para recontruir o sinal original;
+- Os dois outros plots seguintes acentuam ainda mais o efeito do Alisiang;
+
 
 ```{r}
 library(ggplot2)
@@ -251,7 +279,9 @@ p<-ggplot(df11,aes(time,y))+geom_line()+geom_point(data=df2,aes(time,y))+theme_b
 ggplotly(p)
 ```
 
-- Exemplo 9:
+### Exemplo 9:
+
+Este exemplo ilustra a subamostragem, quando amostras do sinal são descartadas.
 
 ```{r}
 #subamostrando o sinal = reduzindo o número de amostras (observe o parâmetro by=10)
@@ -270,7 +300,9 @@ dt <- 1/1000
 dygraph(data.frame(tn = t[i], yn = y[i], yns = y[i]), xlab = "tempo (em segundos)", ylab = "amplitude", main = "Sinal Subamostrado a 200 Hz")%>%dySeries(stemPlot=TRUE)%>%dyRangeSelector(c((517-1)*dt,(600-1)*dt))
 ```
 
-- Exemplo 10:
+### Exemplo 10:
+
+Este exemplo ilustra a reamostragem de um sinal, permitindo que por meio de um sinal subamostrado, aplique-se a interpolação e sejam geradas amostras novas do sinal, aumentando a taxa de amostragem.
 
 ```{r}
 library(ggplot2)
@@ -407,7 +439,9 @@ dygraph(df6, main = "Interpolação") %>%
               hideOnMouseOut = FALSE)
 ```
 
-- Exemplo 11:
+### Exemplo 11:
+
+Este é um exemplo clássico da interpolação usando a função *splines*
 
 ```{r}
 # Exemplo de interpolação utilizando splines
@@ -446,6 +480,7 @@ p <- p + geom_point(data = df1, aes(x = time, y = y1.y)) +
 
 ggplotly(p) # produz um gráfico interativo (disponível na biblioteca plotly)
 ```
+
 
 
 ## Exercício 2
