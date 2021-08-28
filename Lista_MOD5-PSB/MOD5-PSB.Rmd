@@ -11,11 +11,18 @@ output:
 
 # Módulo 5
 ## Exercício 1
-> enunciado
-
-resposta
+> Considerando os dados disponíveis no arquivo “MODULO5.xlsx”, que podem ser visualizados abaixo, responda às questões:
 
 ```{r}
-# codigo
+
 ```
 
+> Questões:
+
+a) Qual a relação sinal-ruído do período entre 0 e 14 segundos. Faça a estimativa para os canais ch1 e ch2.Dica: Utilize o valor RMS para o cálculo.
+b) Faça uma comparação entre os trechos de ruído 1 (entre 0 e 14 s) e ruído 2 (entre 18 e 43 s). Faça a estimativa para os canais ch1 e ch2. Dica: Utilize o valor RMS para o cálculo e apresente os resultados em dB.
+c) Para cada um dos canais (ch1 e ch2) estimate o valor da tendência linear constante. O cálculo deve ser feito de forma independente para os trechos de ruído 1 e 2, e para o trecho de sinal (de 45 a 334 s).
+d) Existe alguma discontinuidade nos sinais dos canais 1 e 2? Justifique a sua resposta por meio do uso de um boxplot. Considere em sua análise o trecho de 0 a 40 s.
+e) Caso exista alguma discontinuidade no sinal (ver letra d) faça a remoção da mesma por meio do método de interpolação linear.Gere um gráfico que ilustre o trecho do sinal com e sem a descontinuidade.
+f) Os sinais apresentados nos canais 1 e 2 são de tempo e valores contínuos. Essa afirmação é verdadeira ou falsa? Justifique.
+g) Desafio: leia o conceito de variável independente e identicamente distribuída (iid) disponível em [link](https://www.statisticshowto.datasciencecentral.com/iid-statistics/). Utilize a fução **diffsign.test** disponível na biblioteca **spgs** para verificar se os trechos de sinais compreendidos entre 0 e 8 s, entre 20 e 40 s, e entre 45 e 334 s, são iid. Justifique a razão de um trecho ser ou não iid.
