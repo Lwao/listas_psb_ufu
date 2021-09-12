@@ -1,3 +1,3 @@
-# Listas de Processamento de Sinais Biológicos
+# Listas de Processamento de Sinais Biomédicos
 
-Listas de exercícios dos 10 módulos da disciplina de Processamento de Sinais Biológicos ofertada pela UFU
+Listas de exercícios dos 10 módulos da disciplina de Processamento de Sinais Biomédicos ofertada pela UFU
