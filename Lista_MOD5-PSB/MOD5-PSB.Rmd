@@ -2,11 +2,12 @@
 ---
 title: "Lista do Módulo 5"
 author: "Levy Gabriel da Silva Galvão"
-output: 
+output:
   html_document:
     highlight: tango
     includes:
       after_body: psbfix.html
+  pdf_document: default
 ---
 
 # Módulo 5
@@ -25,7 +26,8 @@ df_init <- readWorkbook(fname,
 
 str(df_init) # visualização das variáveis disponíveis no data frame (df)
 df <- data.frame(time=df_init$time, ch1 =df_init$chan.1, ch2 = df_init$chan.2 )
-  dygraph(df)%>%dyRangeSelector()
+rm(df_init)
+#dygraph(df)%>%dyRangeSelector() # comment to avoid RAM consumption peak
 ```
 
 > Questões:
@@ -92,7 +94,7 @@ print(clt_signal_ch2) # channel 2
 
 ```
 
-d) Existe alguma discontinuidade nos sinais dos canais 1 e 2? Justifique a sua resposta por meio do uso de um boxplot. Considere em sua análise o trecho de 0 a 40 s.
+d) Existe alguma descontinuidade nos sinais dos canais 1 e 2? Justifique a sua resposta por meio do uso de um boxplot. Considere em sua análise o trecho de 0 a 40 s.
 
 ```{r}
 library(plotly) 
@@ -130,22 +132,39 @@ df$ch2_int <- NA
 df$ch2_int[tdisc] <- y_ch2
 
 # plots
-dygraph(df, main = "Linear interpolation to remove discontinuities linear para remoção de descontinuidades") %>% 
-  dySeries(name="ch1", drawPoints=TRUE, color = "pink" ) %>%
-  dySeries(name="ch2", drawPoints=TRUE, color = "cyan")   %>%
-  dySeries(name="ch1_int", drawPoints=TRUE, color = "red")  %>% 
-  dySeries(name="ch2_int", drawPoints=TRUE, color = "blue")  %>% dyOptions(pointSize = 2)
+dygraph(df[(df$time<=25),], main = "Linear interpolation to remove discontinuities") %>% 
+  dySeries(name="ch1", drawPoints=FALSE, color = "pink" ) %>%
+  dySeries(name="ch2", drawPoints=FALSE, color = "cyan")   %>%
+  dySeries(name="ch1_int", drawPoints=FALSE, color = "red")  %>% 
+  dySeries(name="ch2_int", drawPoints=FALSE, color = "blue")
 
 
 ```
+Apesar dos esforços da interpolação linear, a descontinuidade não é completamente suprimida, pois seu comportamento se perdura como uma exponencial em decaimento, portanto ao tentar interpolar os pontos vizinhos, apesar dos da esquerda apresentarem uma tendência normal para o trecho com ruído, o trecho da direita não possui, portanto prejudicando a interpolação.
 
 f) Os sinais apresentados nos canais 1 e 2 são de tempo e valores contínuos. Essa afirmação é verdadeira ou falsa? Justifique.
 
-```{r}
-```
+Considerando estes sinais como sinais digitalizados, estes não podem ser considerados de valores ou tempos contínuos. Na verdade os sinais de ambos os canais são denotados como de tempo discreto e de amplitude quantizada, pois estes estão armazenados em hardware de natureza digital.
 
 g) Desafio: leia o conceito de variável independente e identicamente distribuída (iid) disponível em [link](https://www.statisticshowto.datasciencecentral.com/iid-statistics/). Utilize a fução **diffsign.test** disponível na biblioteca **spgs** para verificar se os trechos de sinais compreendidos entre 0 e 8 s, entre 20 e 40 s, e entre 45 e 334 s, são iid. Justifique a razão de um trecho ser ou não iid.
 
 
 ```{r}
+library(spgs)
+
+idx_t1 <- which((df$time>=0) & (df$time<=8)) # range 1 - 0~8s
+idx_t2 <- which((df$time>=20) & (df$time<=40)) # range 2 - 20~40s
+idx_t3 <- which((df$time>=45) & (df$time<334)) # range 3 - 45~334s
+
+print(diffsign.test(df$ch1[idx_t1])) # range 1 - ch1
+print(diffsign.test(df$ch2[idx_t1])) # range 1 - ch2
+print(diffsign.test(df$ch1[idx_t2])) # range 2 - ch1
+print(diffsign.test(df$ch2[idx_t2])) # range 2 - ch2
+print(diffsign.test(df$ch1[idx_t3])) # range 3 - ch1
+print(diffsign.test(df$ch2[idx_t3])) # range 3 - ch2
 ```
+Para um trecho ser iid, o processo precisa ocorrer independentemente, porém com distribuição de probabilidade semelhante das suas variáveis aleatórias.
+
+No primeiro e segundo trecho, apesar de apresentarem ruído, estes, visualmente, possuem suas diferência em seus desvios padrões. Já o terceiro trecho é completamente diferente e possui seus valores regidos pelo sinal de análise.
+
+Apesar do segundo trecho apresentar características visuais semelhantes ao primeiro, em termos da análise de seu valor p, observa-se uma independência maior para o primeiro trecho, mostrando assim uma maior aleatoriedade. Como esperado para o terceiro trecho, este possui um baixo valor p, indicando que este trecho segue uma distribuição de probabilidade idêntica.
