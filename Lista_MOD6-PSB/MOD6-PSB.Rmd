@@ -13,7 +13,7 @@ output:
 ## Exercício 1
 > Utilize o software Audacity para gravar cinco sinais de voz com o comando “sim” e outros cinco sinais com o comando “não”. Faça a rotulação de cada segmento dos comandos de voz, salvando-os em arquivos distintos. No total, dez arquivos devem ser gerados.
 
-Os arquivos podem ser carregados:
+Os arquivos podem ser carregados, como:
 
 ```{r}
 library(htmltools)
@@ -31,29 +31,174 @@ nao_fname <- list("nao1.wav", "nao2.wav", "nao3.wav", "nao4.wav", "nao5.wav")
 sim_fpath <- as.list(paste(audio_path,sim_fname, sep = ""))
 nao_fpath <- as.list(paste(audio_path,nao_fname, sep = ""))
 
+# append names of all files
+fnames <- append(sim_fname, nao_fname)
+fpaths <- append(sim_fpath, nao_fpath)
 
-#Função que plota sinais .wav
-plotWAV <- function(fname){
-  
-  originalSound <- readWave(fname)
-  #play(originalSound) # opens Windows Media Player to play the sound. Beware that the window does not automatically close when the audio file is finished playing. You need to close the window before you can continue in R.
-  
-  fs = originalSound@samp.rate # sampling frequency in Hz
-  dt = 1/fs #resolution time in seconds
-  
-  yl <- originalSound@left
-  yr <- originalSound@right
-  
-  tf <- (length(yl)-1)*dt # tempo final em segundos
-  t <- seq(from=0, to=tf, by=dt)
-  
-  df <- data.frame(time=t, yl, yr)
-  
-  # a função basename extrai o nome do arquivo apenas
-  # a função dirname extrai o caminho completo
-  pp <- dygraph(df, main= basename(fname)) %>% dyRangeSelector()
-  
-  return(pp)
-}
+data <- list()
+n = length(fpaths)
+fs <- 44100 # Hz
+
+for(i in c(1:n)){data <- append(data,list(readWave(fpaths[[i]])@left))} # save audio data
+names(data) <- fnames
+
+# sample
+signal <- data[['sim1.wav']]
+m <- length(signal)
+dt <- 1/fs
+t <-seq(from=0, to=(m-1)*dt, by=dt)
+data.frame(time=t, signal=signal) %>% 
+  dygraph(main='Audio sample - sim1.wav') %>% 
+  dyRangeSelector()
 ```
 
+## Exercício 2
+
+> Para cada sinal calcule as estatísticas: média, variância, coeficiente de assimetria e curtose. Organize os resultados em uma tabela (no R) e estime a variância de cada estatística.
+
+- O comando “sim” é estacionário? Justifique.
+- O comando “sim” é ergódico? Justifique.
+- O comando “não” é estacionário? Justifique.
+- O comando “não” é ergódico? Justifique.
+
+```{r}
+library(moments)
+stats_ <- function(x)
+{
+  mean_     <- mean(x)
+  variance_ <- var(x)
+  skewness_ <- skewness(x)
+  kurtosis_ <- kurtosis(x)
+  return(list(mean=mean_, 
+              variance=variance_, 
+              skewness=skewness_, 
+              kurtosis=kurtosis_))
+}
+
+data_stats <- data.frame(matrix(ncol = 5, nrow = 10))
+colnames(data_stats) <- c('index', 'mean', 'variance', 'skewness', 'kurtosis')
+data_stats$index <- as.vector(unlist(fnames))
+for(i in c(1:n)){data_stats[i,2:5] <- unlist(stats_(data[[i]]), use.names=FALSE)} # save data stats
+
+var_row_sim <- data.frame(
+  index    = 'var_sim',
+  mean     = var(data_stats[1:5,2]),
+  variance = var(data_stats[1:5,3]),
+  skewness = var(data_stats[1:5,4]),
+  kurtosis = var(data_stats[1:5,5]),
+  stringsAsFactors = FALSE
+)
+var_row_nao <- data.frame(
+  index    = 'var_nao',
+  mean     = var(data_stats[6:10,2]),
+  variance = var(data_stats[6:10,3]),
+  skewness = var(data_stats[6:10,4]),
+  kurtosis = var(data_stats[6:10,5]),
+  stringsAsFactors = FALSE
+)
+
+data_stats <- rbind(data_stats, var_row_sim)
+data_stats <- rbind(data_stats, var_row_nao)
+table_ <- as.table(sapply(data_stats,unlist))
+
+# sample
+print(table_)
+```
+
+Considerando que para um processo estacionário a sua média não varia com o tempo e para um processo ergódico a média entre janelas do sinal é semelhante, com variância da estatística tendendo a zero.
+
+Ao observar a linha da tabela da variância das estatísticas, pode-se observar que a variância da média para ambos os sinais "sim" e "não" é baixa, implicando assim em um processo estacionário para ambos.
+
+Porém ao avaliar a ergodicidade, nota-se que a variância das estatísticas de variância, coeficiente de assimetria e curtose não tende a zero. Isso mostra que um conceito amplo de ergodicidade não pode ser atribuído a esses sinais. Mas uma vez que a variância da média tende a zero, ainda pode-se dizer que o processo dos sinais de "sim" e "não" podem ser considerados ergódicos para a média.
+
+# Exercício 3
+
+> Utilize o valor máximo da correlação cruzada para realizar a comparação entre comandos de voz. Anote estes valores em uma tabela, conforme padrão abaixo. Utilize um lag de 10.000 amostras no cálculo.
+
+- Baseado nos resultados apresentados na tabela, como você poderia desenvolver um sistema de reconhecimento automático de voz, que realiza a distinção entre os comandos “sim” e “não”?
+
+```{r}
+cctable <- matrix(nrow=10,ncol=10)
+names <- c('SIM-1','SIM-2','SIM-3','SIM-4','SIM-5','NÃO-1','NÃO-2','NÃO-3','NÃO-4','NÃO-5')
+colnames(cctable) <- names
+rownames(cctable) <- names
+
+print(cctable) # initialize table
+
+for(i in c(1:n))
+{
+  for(j in c(1:n))
+  {
+    cctable[i,j] <- ccf(data[[i]], data[[j]], lag.max=10000, pl=FALSE)$acf %>% max()
+  }
+}
+
+print(cctable) # max cross-correlation table
+```
+Para desenvolver um sistema de reconhecimento automático de voz, como para distinguir entre "sim" e "não" pronunciado, inciialmente seriam identificados padrões inerentes a cada tipo de comando. Após isso, esse vetor de padrões seria correlacionado com cada sinal a ser reconhecido por meio de uma correlação cruzada e, aquele padrão que tiver maior correlação com o sinal de interesse, implicará que o sinal de interesse será um "sim" ou "não".
+
+# Exercício 4
+
+> Considerando a avaliação de três grupos neurônios, com as características abaixo:
+
+- E1: média de disparo = 53 ms; desvio padrão = 50 ms
+- E2: média de disparo = 100 ms; desvio padrão = 35 ms
+- E3: média de disparo = 53 ms; desvio padrão = 15 ms
+- Dica: o intervalo entre disparos é um processo pontual com distribuição gaussina (Utilize a função rnorm do R para gerar os tempos de disparo)
+
+```{r}
+fs <- 10000 # Hz
+dt <- 1/fs # s
+t_end <- 10 # s
+t <- seq(0, t_end, by=dt)
+n <- length(t)
+
+E1.firing <- rep(0,n)
+E1.mean <- 53e-3
+E1.std <- 50e-3
+rand_ <- rnorm(100, mean=E1.mean, sd=E1.std)
+E1.range1 <- round(rand_[cumsum(rand_)<1],4)
+rand_ <- rnorm(100, mean=E1.mean, sd=E1.std)
+E1.range2 <- round(rand_[cumsum(rand_)<2],4)
+E1.firing[t %in% (1+E1.range1)] = 1
+E1.firing[t %in% (5+E1.range2)] = 1
+
+E2.firing <- rep(0,n)
+E2.mean <- 100e-3
+E2.std <- 35e-3
+rand_ <- rnorm(100, mean=E2.mean, sd=E2.std)
+E2.range1 <- round(rand_[cumsum(rand_)<2],4)
+rand_ <- rnorm(100, mean=E2.mean, sd=E2.std)
+E2.range2 <- round(rand_[cumsum(rand_)<2],4)
+E2.firing[t %in% (2+E2.range1)] = 1
+E2.firing[t %in% (7+E2.range2)] = 1
+
+E3.firing <- rep(0,n)
+E3.mean <- 53e-3
+E3.std <- 15e-3
+rand_ <- rnorm(100, mean=E3.mean, sd=E3.std)
+E3.range1 <- round(rand_[cumsum(rand_)<2],4)
+rand_ <- rnorm(100, mean=E3.mean, sd=E3.std)
+E3.range2 <- round(rand_[cumsum(rand_)<2],4)
+E3.firing[t %in% (1+E3.range1)] = 1
+E3.firing[t %in% (9+E3.range2)] = 1
+
+# plots
+data.frame(time=t, data=E1.firing) %>% dygraph
+data.frame(time=t, data=E2.firing) %>% dygraph
+data.frame(time=t, data=E3.firing) %>% dygraph
+
+# histograms
+E1.hist <- hist(E1.firing, probability=TRUE)
+E2.hist <- hist(E2.firing, probability=TRUE)
+E3.hist <- hist(E3.firing, probability=TRUE)
+```
+
+Devido à baixa densidade de disparos, acaba que a visualização do histograma é tendenciosa para o estado de repouso, porém pode-se observar os valores armazenados no histograma para retirar as conclusões de que ocorreu o disparo:
+
+```{r}
+# histogram counts
+print(E1.hist$counts)
+print(E2.hist$counts)
+print(E3.hist$counts)
+```
