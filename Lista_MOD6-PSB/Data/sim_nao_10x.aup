@@ -1,0 +1,33 @@
+<?xml version="1.0" standalone="no" ?>
+<!DOCTYPE project PUBLIC "-//audacityproject-1.3.0//DTD//EN" "http://audacity.sourceforge.net/xml/audacityproject-1.3.0.dtd" >
+<project xmlns="http://audacity.sourceforge.net/xml/" projname="sim_nao_10x_data" version="1.3.0" audacityversion="2.3.2" sel0="14.0248526077" sel1="14.3963718821" vpos="0" h="3.5294331066" zoom="86.1328125000" rate="44100.0" snapto="off" selectionformat="hh:mm:ss + milliseconds" frequencyformat="Hz" bandwidthformat="octaves">
+	<tags/>
+	<wavetrack name="Faixa de Áudio" channel="2" linked="0" mute="0" solo="0" height="150" minimized="0" isSelected="0" rate="44100" gain="1.0" pan="0.0" colorindex="0">
+		<waveclip offset="0.00000000" colorindex="0">
+			<sequence maxsamples="262144" sampleformat="262159" numsamples="707227">
+				<waveblock start="0">
+					<simpleblockfile filename="e0808317.au" len="262144" min="-0.485992" max="0.383423" rms="0.037395"/>
+				</waveblock>
+				<waveblock start="262144">
+					<simpleblockfile filename="e0808cf0.au" len="262144" min="-0.403046" max="0.332275" rms="0.038986"/>
+				</waveblock>
+				<waveblock start="524288">
+					<simpleblockfile filename="e080898c.au" len="182939" min="-0.284546" max="0.273071" rms="0.026731"/>
+				</waveblock>
+			</sequence>
+			<envelope numpoints="0"/>
+		</waveclip>
+	</wavetrack>
+	<labeltrack name="Faixa de Rótulos" numlabels="10" height="73" minimized="0" isSelected="0">
+		<label t="0.6501587302" t1="1.2422675737" title=""/>
+		<label t="2.0433560091" t1="2.3219954649" title=""/>
+		<label t="3.3552834467" t1="3.7384126984" title=""/>
+		<label t="4.8994104308" t1="5.3057596372" title=""/>
+		<label t="6.5248072562" t1="7.0008163265" title=""/>
+		<label t="8.1502040816" t1="8.6958730159" title=""/>
+		<label t="9.5898412698" t1="10.0542403628" title=""/>
+		<label t="11.0410884354" t1="11.4938775510" title=""/>
+		<label t="12.5503854875" t1="12.9915646259" title=""/>
+		<label t="14.0248526077" t1="14.3963718821" title=""/>
+	</labeltrack>
+</project>

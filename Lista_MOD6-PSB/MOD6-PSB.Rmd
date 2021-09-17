@@ -11,11 +11,49 @@ output:
 
 # Módulo 6
 ## Exercício 1
-> enunciado
+> Utilize o software Audacity para gravar cinco sinais de voz com o comando “sim” e outros cinco sinais com o comando “não”. Faça a rotulação de cada segmento dos comandos de voz, salvando-os em arquivos distintos. No total, dez arquivos devem ser gerados.
 
-resposta
+Os arquivos podem ser carregados:
 
 ```{r}
-# codigo
+library(htmltools)
+library(dygraphs)
+library(tuneR)
+library(dygraphs)
+
+audio_path <- "Data/"
+
+# file lists
+sim_fname <- list("sim1.wav", "sim2.wav", "sim3.wav", "sim4.wav", "sim5.wav")
+nao_fname <- list("nao1.wav", "nao2.wav", "nao3.wav", "nao4.wav", "nao5.wav")
+
+# merge file name with full path
+sim_fpath <- as.list(paste(audio_path,sim_fname, sep = ""))
+nao_fpath <- as.list(paste(audio_path,nao_fname, sep = ""))
+
+
+#Função que plota sinais .wav
+plotWAV <- function(fname){
+  
+  originalSound <- readWave(fname)
+  #play(originalSound) # opens Windows Media Player to play the sound. Beware that the window does not automatically close when the audio file is finished playing. You need to close the window before you can continue in R.
+  
+  fs = originalSound@samp.rate # sampling frequency in Hz
+  dt = 1/fs #resolution time in seconds
+  
+  yl <- originalSound@left
+  yr <- originalSound@right
+  
+  tf <- (length(yl)-1)*dt # tempo final em segundos
+  t <- seq(from=0, to=tf, by=dt)
+  
+  df <- data.frame(time=t, yl, yr)
+  
+  # a função basename extrai o nome do arquivo apenas
+  # a função dirname extrai o caminho completo
+  pp <- dygraph(df, main= basename(fname)) %>% dyRangeSelector()
+  
+  return(pp)
+}
 ```
 
