@@ -11,11 +11,158 @@ output:
 
 # Módulo 10
 ## Exercício 1
-> enunciado
+> O arquivo “ColetaEEG-M10.rhd” - disponível na plataforma Moodle possui dados referentes a 16 canais de sinais EEG e um canal auxiliar (pulso) que foi utilizado para indicar a marcação de eventos durante a coleta dos dados. No total foram gerados 5 eventos (E1, E2, E3, E4 e E5). Os eventos registrados estão relacionados com os seguintes estados mentais do indivíduo:
 
-resposta
+- Mente focada, em uma determinada imagem internalizada, por exemplo o Sol, com os olhos abertos.
+- Mente focada, em uma determinada imagem internalizada, por exemplo o Sol, com os olhos fechados.
+- Realização mental de operações matemáticas:
+  - $X=33+55+12$
+  - $X=300−33+95$
+  - $X=334$
+
+a) Converta os arquivos dos sinais coletados em formato Excel. Para isto utilize a toolbox disponível em https://github.com/aoandrade/PDPack. As seguintes bibliotecas e programas exemplos devem ser empregadas:
+
+- read_Intan_RHD2000_file.R
+- ExampleOpenItantFile.R
+- ExampleConvertIntanToExcel.R
 
 ```{r}
-# codigo
+#source("read_Intan_RHD2000_file.R")
+#filename <- 'Dados/ColetaEEG-M10.rhd' # File selection
+#df <- OpenIntanFile(filename) # Open an Intan file
+#write.csv(df,"Dados/EEG.csv", row.names = FALSE)
+
+df <- read.csv('Dados/EEG.csv', header=TRUE, sep=',')
+```
+
+b) Plote cada um dos sinais coletados utilizando a função dygraph. Em cada um dos gráficos sombreie as regiões que indiquem o início e o fim das atividades (eventos) realizadas durante o protocolo experimental.
+
+- A função dyShading deve ser utilizada para realizar o sombreamento.
+- Todos os gráficos devem conter legendas dos eixos e título que identifique o sinal.
+- O intervalo em que uma atividade (evento) ocorre é delimitado por dois pulsos consecutivos. – Considere o início e o final da atividade os instantes em que o pulso sai do nível alto e retorna ao nível baixo.
+- No conjunto de dados em análise temos 10 pulsos, ou seja, cada par de pulso delimita o ínicio e o final de um evento.
+
+Será trabalhado apenas com 1 canal devido problemas de alocação de memória.
+
+```{r}
+library(dygraphs)
+dt <- df$time[2]-df$time[1]
+idx_ini <- which(diff(df$pulse)==1)+1
+idx_end <- which(diff(df$pulse)==-1)+1
+
+dg <- data.frame(time=df$time, ch1=df$chan.1) %>% 
+  dygraph(main='EEG - Channel 1') %>% 
+  dyRangeSelector()
+for(i in (1:length(idx_ini))){dg <- dg %>% dyShading(from=idx_ini[i]*dt, to=idx_end[i]*dt, color="#279CFD", axis="x")}
+dg
+```
+
+## Exercício 2
+
+> Faça a filtragem de todos os sinais EEG, por meio de um filtro Butterworth de ordem n=2, para a estimativa das ondas Delta, Teta, Alfa, Beta e Gama. Os passos abaixo devem ser considerados:
+
+a) Gere o gráfico do espectro de amplitude para cada um dos filtros criados deve ser plotado.
+
+```{r}
+library(signal)
+library(REdaS)
+
+fs <- 1/dt # Hz
+n <- 2 # order
+
+# band-pass Butterworth filters to estimate various waves
+
+bt_delta <- butter(n, c(0.5,70)/(fs/2), type="pass") # Delta
+freqz(filt=bt_delta, Fs=fs)
+bt_teta <- butter(n, c(4,7)/(fs/2), type="pass") # Teta
+freqz(filt=bt_teta, Fs=fs)
+bt_alfa <- butter(n, c(7,13)/(fs/2), type="pass") # Alfa
+freqz(filt=bt_alfa, Fs=fs)
+bt_beta <- butter(n, c(13,30)/(fs/2), type="pass") # Beta
+freqz(filt=bt_beta, Fs=fs)
+bt_gama <- butter(n, c(30,70)/(fs/2), type="pass") # Gama
+freqz(filt=bt_gama, Fs=fs)
+```
+
+b) Faça a filtragem dos sinais por meio do uso da função filtfilt.
+
+```{r}
+apply_filt <- function(signal)
+{
+  ch <- data.frame(time=df$time,
+    delta = filtfilt(filt=bt_delta, signal),
+    teta <- filtfilt(filt=bt_teta, signal),
+    alfa <- filtfilt(filt=bt_alfa, signal),
+    beta <- filtfilt(filt=bt_beta, signal),
+    gama <- filtfilt(filt=bt_gama, signal)    )
+  colnames(ch) <- c('time','delta','teta','alfa','beta','gama')
+  return(ch)
+}
+ch1 <- apply_filt(df$chan.1)
+ch2 <- apply_filt(df$chan.2)
+ch3 <- apply_filt(df$chan.3)
+ch4 <- apply_filt(df$chan.4)
+ch5 <- apply_filt(df$chan.5)
+ch6 <- apply_filt(df$chan.6)
+ch7 <- apply_filt(df$chan.7)
+ch8 <- apply_filt(df$chan.8)
+ch9 <- apply_filt(df$chan.9)
+ch10 <- apply_filt(df$chan.10)
+ch11 <- apply_filt(df$chan.11)
+ch12 <- apply_filt(df$chan.12)
+ch13 <- apply_filt(df$chan.13)
+ch14 <- apply_filt(df$chan.14)
+ch15 <- apply_filt(df$chan.15)
+ch16 <- apply_filt(df$chan.16)
+```
+
+c) Utilize a biblioteca dygraphs e a função dyHighlight para visualizar e comparar o sinal original com o o filtrado.
+
+```{r}
+ch1 %>% dygraph(main='Filtered EEG - CH1') %>% dyHighlight() 
+```
+
+## Exercício 3
+
+> Faça um gráfico que ilustre a relação entre os eventos (no eixo x) e o valor de frequência médio (Hz) para o pico do espectro de amplitude dos 16 canais de EEG disponíveis. Neste gráfico deverão ser geradas as curvas para cada uma das ondas de sinais EEG. A figura abaixo mostra a forma como o gráfico deve ser apresentado. Os valores e tendências no gráfico são meramente ilustrativos. A sequência de passos abaixo deve ser considerada:
+
+a) Todos os sinais (os 16 canais de EEG) deverão ser filtrados por cada um dos filtros utilizados na questão 2.
+
+b) O espectro de amplitude deve ser estimado por meio da transformada de Fourier. O valor de amplitude deve ser expresso em dB e o valor de frequência em Hz.
+
+c) O espectro de amplitude deve ser estimado exclusivamente para os trechos dos sinais delimitados pelo intervalo de tempo de evento.
+
+d) O pico (valor máximo) da amplitude do espectro deve ser encontrado, e o respectivo valor de frequência (Hz) deve ser armazenado.
+
+e) Deve-se organizar as estimativas (do item d) de tal forma que seja possível calcular o valor médio dos valores do pico de todos os canais de EEG.
+
+f) As informações deverão ser organizadas de modo a possibilitar a geração de um gráfico tal como o ilustrado abaixo.
+
+```{r}
+mean_freq <- function(signal, fs, idx1, idx2)
+{
+  n <- length(idx1)
+  event_freq <- rep(0,n)
+  for(i in (1:n))
+  {
+    mag <- rep(0i,length(idx1[i]:idx2[i]))
+    mag <- abs(fft(signal[idx1[i]:idx2[i]]))
+    N <- length(mag)
+    freq <- seq(from=-fs/2, to=fs/2-fs/N, by=fs/N)
+    event_freq[i] <- abs(freq[which(mag==max(mag))][1])
+  }
+  return(event_freq)
+}
+
+eFreq <- data.frame(event=1:10,
+                    delta=mean_freq(ch1$delta,fs,idx_ini,idx_end),
+                    teta=mean_freq(ch1$teta,fs,idx_ini,idx_end),
+                    alfa=mean_freq(ch1$alfa,fs,idx_ini,idx_end),
+                    beta=mean_freq(ch1$beta,fs,idx_ini,idx_end),
+                    gama=mean_freq(ch1$gama,fs,idx_ini,idx_end)) 
+
+eFreq %>% 
+  dygraph(xlab='Event',ylab='Average frequency of the amplitude spectrum peak (Hz)') %>%
+  dyOptions(drawPoints = TRUE, pointSize = 2)
 ```
 
